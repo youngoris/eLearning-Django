@@ -5,72 +5,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}eLearning Platform{% endblock title %}</title>
+    <title>{% block title %}eLearning Project{% endblock title %}</title>
     <!-- Bootstrap CSS -->
     <link href="{% static 'admin/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'admin/css/avatar.min.css' %}" rel="stylesheet">
+    <link href="{% static 'admin/css/custom_styles.css' %}" rel="stylesheet">
     <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script>
     
     {% block extra_css %}{% endblock extra_css %}
-    <style>
-        .navbar-custom {
-            background-color: #007bff; /* Bootstrap primary color */
-        }
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: white; /* Ensuring the text is visible on the dark background */
-        }
-        .navbar-custom .nav-link:hover {
-            color: #ccc; /* Lighten the text on hover for better UX */
-        }
-    </style>
+
 </head>
 <body>
     <header>
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-custom">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'home' %}">eLearning</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg  navbar-custom" >
+            <div class="container-fluid align-items-center"> <!-- 使用Flexbox工具类来确保垂直居中 -->
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'admin/img/logo.png' %}" alt="eLearning Logo" style="width: 60px;">
+                    E-Learning
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                    <div class="navbar-nav align-items-center"> <!-- 确保导航项也垂直居中 -->
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        <a class="nav-link" href="{% url 'courses:course_list' %}">Courses</a>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="avatar avatar-48 bg-light rounded-circle text-white p-2"
+                                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg">  
+                                <span class="navbar-text mx-0" >{{ user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'courses:course_list' %}">Courses</a>
-                        </li>
-                        <!-- More navigation items -->
-                    </ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                    </ul>
+                        {% else %}
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        {% endif %}
+                        <!-- Search form -->
+                        <form class="d-flex align-items-center"> <!-- 确保表单也垂直居中 -->
+                            <input class="form-control me-2" type="search" placeholder="What to learn?" aria-label="Search" style="height: 38px;"> <!-- 指定输入框高度 -->
+                            <button class="btn btn-outline-light" type="submit">Search</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </nav>
+
     </header>
 
-    <main role="main" class="container mt-4">
+    <main role="main" class="container mt-5">
         {% block content %}
         <!-- Content will be overridden in child templates -->
         {% endblock content %}
     </main>
 
-    <footer class="text-muted py-4 bg-light">
+    <footer class="bg-dark text-light py-4" style="margin-top: 50px;">
         <div class="container">
-            <p class="float-right mb-1">
-                <a href="#">Back to top</a>
-            </p>
-            <p class="mb-1">eLearning &copy; Your Website 2024</p>
-            <!-- Footer Links or Copyright Information -->
+            <div class="row">
+                <!-- About Section -->
+                <div class="col-md-3">
+                    <h5>About</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Our Story</a></li>
+                        <li><a href="#" class="text-light">Team</a></li>
+                        <li><a href="#" class="text-light">Careers</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Courses Section -->
+                <div class="col-md-3">
+                    <h5>Courses</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Browse Courses</a></li>
+                        <li><a href="#" class="text-light">Categories</a></li>
+                        <li><a href="#" class="text-light">Certifications</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Support Section -->
+                <div class="col-md-3">
+                    <h5>Support</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Contact Us</a></li>
+                        <li><a href="#" class="text-light">Help Center</a></li>
+                        <li><a href="#" class="text-light">Privacy Policy</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Social Media Section -->
+                <div class="col-md-3">
+                    <h5>Follow Us</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Facebook</a></li>
+                        <li><a href="#" class="text-light">Twitter</a></li>
+                        <li><a href="#" class="text-light">LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- CopyRight Section -->
+            <div class="text-center mt-4">
+                <p>© 2024 E-Learning. All rights reserved.</p>
+            </div>
         </div>
     </footer>
-
+    
     <!-- Bootstrap Bundle with Popper -->
-    <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script>
+    {% comment %} <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script> {% endcomment %}
     {% block extra_js %}{% endblock extra_js %}
 </body>
 </html>

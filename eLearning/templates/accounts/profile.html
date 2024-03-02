@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>User Profile</h2>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    <!-- 根据用户类型展示不同内容 -->
+    {% if is_student %}
+    <div>
+        <h3>Student Content</h3>
+        <!-- 学生特有内容 -->
+    </div>
+    {% elif is_teacher %}
+    <div>
+        <h3>Teacher Content</h3>
+        <!-- 教师特有内容 -->
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

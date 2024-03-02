@@ -1,0 +1,38 @@
+
+.navbar-custom {
+    background-color: #0056b3; /* Adjusted to a deeper shade of blue for a more Coursera-like feel */
+}
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    color: #fff; /* White text for better contrast */
+}
+.navbar-custom .nav-link:hover {
+    color: #f8f9fa; /* Slightly lighter shade on hover */
+}
+.form-inline .form-control {
+    margin-right: 10px; /* Spacing between input and button */
+}
+
+
+/* 调整提示词的样式 */
+.form-text {
+    display: block; /* 确保提示词在新的一行 */
+    /* margin-top: 0.25rem; 添加一点间距在提示词的顶部 */
+    font-size: 0.8em; /* 缩小字体大小 */
+    color: #6c757d; /* 减淡字体颜色，使用 Bootstrap 的默认次要文本颜色 */
+}
+
+/* 针对错误信息的样式调整 */
+.alert-danger {
+    margin-top: 0.25rem; /* 在错误信息顶部添加一点间距 */
+    font-size: 0.875em; /* 缩小字体大小 */
+}
+
+
+.welcome-container {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+    padding-top: 50px;
+}
+

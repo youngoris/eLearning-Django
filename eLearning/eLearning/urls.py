@@ -20,6 +20,7 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
+    path('accounts/', include('apps.accounts.urls')),
     path('courses/', include('apps.courses.urls', namespace='courses')),
     path('students/', include('apps.students.urls')),
     path('teachers/', include('apps.teachers.urls')),

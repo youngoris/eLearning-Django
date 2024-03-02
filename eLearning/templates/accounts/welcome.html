@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container welcome-container">
+    <h2>Welcome to eLearning!</h2>
+    <p>Your registration was successful. You will be redirected to the login page in <span id="countdown">10</span> seconds.</p>
+</div>
+
+<script>
+// Set the countdown time in seconds
+var timeLeft = 10;
+
+// Update the countdown every 1 second
+var countdownTimer = setInterval(function() {
+    // Decrease the time left
+    timeLeft--;
+    // Update the countdown display
+    document.getElementById("countdown").innerHTML = timeLeft;
+    
+    // Check if the countdown is over
+    if (timeLeft <= 0) {
+        clearInterval(countdownTimer);
+        // Redirect to the login page
+        window.location.href = "{% url 'login' %}";
+    }
+}, 1000);
+</script>
+{% endblock %}
