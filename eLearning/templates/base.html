@@ -34,12 +34,11 @@
                         {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img class="avatar avatar-48 bg-light rounded-circle text-white p-2"
-                                src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg">  
-                                <span class="navbar-text mx-0" >{{ user.username }}</span>
+                                <img class="avatar avatar-48 bg-light rounded-circle text-white p-0" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'admin/img/avatar.svg' %}{% endif %}" alt="User avatar">
+                                <span class="navbar-text mx-0 " style="color: white;" >{{ user.username }}</span>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                <li><a class="dropdown-item" href="{% url 'profile' %}">Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             </ul>

@@ -1,21 +1,83 @@
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'admin/css/custom_styles.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>User Profile</h2>
-    <p>Username: {{ user.username }}</p>
-    <p>Email: {{ user.email }}</p>
-    <!-- 根据用户类型展示不同内容 -->
-    {% if is_student %}
-    <div>
-        <h3>Student Content</h3>
-        <!-- 学生特有内容 -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2>User Profile</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Type:</strong> {{ user.user_type }}</p>
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Real Name:</strong> {{ user.real_name }}</p>
+                    <p><strong>Birth Date:</strong> {{ user.birth_date }}</p>
+                    <p><strong>Country:</strong> {{ user.country }}</p>
+                    <p><strong>Avatar:</strong> 
+                        <img class="avatar avatar-48 bg-light rounded-circle text-white p-0" src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'admin/img/avatar.svg' %}{% endif %}"  alt="User avatar">
+                    </p>
+                        <!-- 编辑按钮 -->
+                    {% if not edit_mode %}
+                    <a href="?edit=1" class="btn btn-primary">Edit</a>
+                    {% endif %}
+
+                    <!-- 编辑表单 -->
+                    {% if edit_mode %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                        <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                    {% endif %}
+                    <!-- 根据用户类型展示不同内容 -->
+                    {% if user.is_student %}
+                    <div>
+                        <h3>Student Content</h3>
+                        <!-- 学生特有内容 -->
+                    </div>
+                    {% elif user.is_teacher %}
+                    <div>
+                        <h3>Teacher Content</h3>
+                        <!-- 教师特有内容 -->
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 安全模块：密码更改表单 -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h3>Security</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'change_password' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="old_password">Old Password</label>
+                            <input type="password" class="form-control" id="old_password" name="old_password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password1">New Password</label>
+                            <input type="password" class="form-control" id="new_password1" name="new_password1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password2">Confirm New Password</label>
+                            <input type="password" class="form-control" id="new_password2" name="new_password2" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    {% elif is_teacher %}
-    <div>
-        <h3>Teacher Content</h3>
-        <!-- 教师特有内容 -->
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
