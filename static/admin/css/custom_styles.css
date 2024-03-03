@@ -53,6 +53,14 @@
     object-fit: cover; /* 确保图片内容适合容器 */
 }
 
+.avatar-nav {
+    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* 确保图片为圆形 */
+    object-fit: cover; /* 确保图片内容适合容器 */
+}
+
 .comment-header {
     display: flex;
     align-items: center;

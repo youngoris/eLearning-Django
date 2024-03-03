@@ -8,6 +8,7 @@ def home(request):
     courses = Course.objects.all()[:5]  # 举例，获取最新的5门课程
     context = {'courses': courses}
 
+
     if request.user.is_authenticated:
         if hasattr(request.user, 'teacher_profile'):
             # 为教师用户准备的上下文
@@ -22,8 +23,6 @@ def home(request):
 
 
     return render(request, 'main/home.html', context)
-
-
 
 def search_results(request):
     query = request.GET.get('query', '')

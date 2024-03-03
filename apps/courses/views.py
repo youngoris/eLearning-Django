@@ -1,9 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django import forms
 from .forms import CourseForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Course, Enrollment, Comment 
+from .models import Course, Enrollment, Comment, Category
 
 
 def course_list(request):
@@ -57,8 +56,6 @@ def edit_course(request, id):
 
     return render(request, 'courses/edit_course.html', {'form': form, 'course': course})
 
-
-
 @login_required
 def add_comment_to_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
@@ -69,11 +66,7 @@ def add_comment_to_course(request, course_id):
         messages.success(request, 'Your comment has been added.')
     return redirect('courses:course_detail', id=course_id)
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['text', 'rating']
-        widgets = {
-            'rating': forms.RadioSelect(choices=[(i, str(i)) for i in range(1, 11)]),
-            'text': forms.Textarea(attrs={'placeholder': 'Add a comment...'})
-        }
+def category_courses(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    courses = Course.objects.filter(category=category)
+    return render(request, 'courses/category_courses.html', {'category': category, 'courses': courses})
