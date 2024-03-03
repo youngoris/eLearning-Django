@@ -1,24 +1,27 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Teacher
-from apps.courses.forms import CourseForm  # 假设您有一个表单处理课程信息
-from apps.courses.models import Course  # 确保导入路径正确
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from apps.courses.forms import CourseForm
+from apps.courses.models import Course
+
+def is_teacher(user):
+    return user.is_authenticated and user.user_type == 'teacher'
 
 @login_required
-def teacher_detail(request, id):
-    teacher = get_object_or_404(Teacher, pk=id)
-    return render(request, 'teachers/teacher_detail.html', {'teacher': teacher})
-
-@login_required
-def add_course(request, id):
-    teacher = get_object_or_404(Teacher, pk=id)
+@user_passes_test(is_teacher)
+def add_course(request):
     if request.method == 'POST':
-        form = CourseForm(request.POST)
+        form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
             course = form.save(commit=False)
-            course.teacher = teacher  # 假设Course模型中有指向Teacher的外键
+            course.teacher = request.user
             course.save()
-            return redirect('some-view')  # 重定向到适当的视图
+            # Redirect to a new URL:
+            return redirect('courses:course_list')
     else:
         form = CourseForm()
-    return render(request, 'teachers/add_course.html', {'form': form, 'teacher': teacher})
+    return render(request, 'teachers/add_course.html', {'form': form})
+
+
+def teacher_detail(request, id):
+    # 此处添加处理逻辑
+    return render(request, 'teachers/teacher_detail.html', {})

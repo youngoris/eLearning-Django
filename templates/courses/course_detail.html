@@ -1,0 +1,104 @@
+<!-- templates/courses/course_detail.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Video and course details -->
+        <div class="col-md-8">
+            <!-- Video player -->
+            {% if course.videos %}
+            <div class="video-player mb-3 card">
+                <video controls src="{{ course.videos.url }}" style="width: 100%;"></video>
+            </div>
+            {% endif %}
+            
+            <!-- Course details -->
+            <div class=" card card-body mb-3">
+                <h2 class="card-title">{{ course.title }}</h2>
+            </div>
+            <div class=" card mb-3">
+                <div class="  card-body">
+                    <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
+                    <p class="card-text"><strong>Teacher:</strong> {{ course.teacher }}</p>
+                    <p class="card-text"><strong>Category:</strong> {{ course.category.name }}</p>
+                    <p class="card-text"><strong>Language:</strong> {{ course.language.name }}</p>
+                    <p class="card-text"><strong>Start Date:</strong> {{ course.start_date }}</p>
+                    <p class="card-text"><strong>End Date:</strong> {{ course.end_date }}</p>
+                    
+                    <!-- Enroll button for students -->
+                    {% if user.is_authenticated and user.user_type == 'student' %}
+                        {% if not is_enrolled %}
+                            <form action="{% url 'enroll_in_course' course.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Enroll</button>
+                            </form>
+                        {% else %}
+                            <button class="btn btn-success" disabled>Enrolled</button>
+                        {% endif %}
+                    {% endif %}
+                    
+                    <!-- Edit button for teachers -->
+                    {% if user.is_authenticated and user.user_type == 'teacher' and course.teacher == user %}
+                    <a href="{% url 'courses:edit_course' course.id %}" class="btn btn-secondary">Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section float card">
+                <div class="card-body">
+                    <h3 class="card-title">Comments</h3>
+                    <!-- Comments form -->
+                    <form action="{% url 'courses:add_comment' course.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea class="form-control" name="comment" rows="3" placeholder="Leave a feedback"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <!-- List of comments -->
+                    {% for comment in course.comments.all %}
+                    <div class="comment card">
+                        <div class="comment-header d-flex align-items-center">
+                            <div>
+                                <img class="avatar bg-light rounded-circle text-white p-0 mr-3" src="{{ comment.user.get_avatar_url }}" alt="avatar">         
+                            </div>
+                            <div class="comment-info">
+                                <strong>@{{ comment.user.username }}</strong>
+                                <span>: {{ comment.text }}</span>  
+                            </div>
+                        </div>
+                        <!-- 时间戳独立于comment-header外，使用绝对定位 -->
+                        <p class="comment-timestamp mb-0">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Courses -->
+        <div class="col-md-4 card">
+            <div class="recommended-courses  ">
+                <h3 class="mb-3">Recommended</h3>
+                {% for recommended_course in recommended_courses %}
+                <div class="card mb-3">
+                    <img src="{{ recommended_course.cover.url }}" class="card-img-top" alt="Course Cover">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ recommended_course.title }}</h5>
+                        <p class="card-text"><small class="text-muted">By {{ recommended_course.teacher }}</small></p>
+                        <a href="{% url 'courses:course_detail' recommended_course.id %}" class="btn btn-primary">View Course</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

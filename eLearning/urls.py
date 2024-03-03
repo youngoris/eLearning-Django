@@ -16,8 +16,10 @@ Including another URLconf
 """
 
 
-
+from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),
@@ -25,4 +27,5 @@ urlpatterns = [
     path('students/', include('apps.students.urls')),
     path('teachers/', include('apps.teachers.urls')),
     path('', include('apps.main.urls')),  # 通常用于首页和其他通用页面
-]
+    path('admin/', admin.site.urls),  # 用于自定义管理后台
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

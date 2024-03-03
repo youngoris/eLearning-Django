@@ -36,3 +36,38 @@
     padding-top: 50px;
 }
 
+
+/* comments */
+.comment {
+    margin-bottom: 0px;
+    margin-top: 20px;
+    padding: 5px;
+    position: relative; /* 新增：为绝对定位的时间戳提供参考 */
+}
+
+.avatar {
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* 确保图片为圆形 */
+    object-fit: cover; /* 确保图片内容适合容器 */
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+}
+
+.comment-info {
+    margin-left: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.comment-timestamp {
+    position: absolute;
+    bottom: 0px; /* 调整为所需的外侧距离 */
+    right: 5px;
+    font-size: 0.6rem; /* 调整时间戳的字体大小 */
+    color: #999; /* 调整字体颜色为更淡的灰色 */
+}

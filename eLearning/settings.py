@@ -140,3 +140,6 @@ LOGIN_REDIRECT_URL = '/accounts/profile/'
 DEFAULT_AVATAR_URL = 'static/admin/img/avatar.svg'
 
 LOGOUT_REDIRECT_URL = '/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

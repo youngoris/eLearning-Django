@@ -1,43 +1,60 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
+{% block extra_css %}
+{% comment %} <link href="{% static 'css/coursera_style.css' %}" rel="stylesheet"> {% endcomment %}
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Courses</h2>
-    <div class="row">
-        {% if courses %}
-            {% for course in courses %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ course.title }}</h5>
-                        <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View details</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            {% for _ in "123456789"|make_list %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title placeholder-glow">
-                            <span class="placeholder col-6"></span>
-                        </h5>
-                        <p class="card-text placeholder-glow">
-                            <span class="placeholder col-7"></span>
-                            <span class="placeholder col-4"></span>
-                            <span class="placeholder col-4"></span>
-                            <span class="placeholder col-6"></span>
-                            <span class="placeholder col-8"></span>
-                            
-                        </p>
-                        <a href="#" tabindex="-1" class="btn btn-primary disabled placeholder col-6"></a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+<div class="container mt-5">
+    <div class="welcome-banner">
+        <h1>Welcome to Our E-Learning Platform</h1>
+        {% if not request.user.is_authenticated %}
+        <p>Join us today and start learning!</p>
+        <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
         {% endif %}
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <div class="user-specific-content">
+        {% if request.user.student_profile %}
+        <div class="student-courses">
+            <h2>Your Courses</h2>
+            <div class="courses-list">
+                {% for enrollment in student_enrollments %}
+                <div class="course">
+                    <h3>{{ enrollment.course.title }}</h3>
+                    <p>Status: {{ enrollment.status }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% elif request.user.teacher_profile %}
+        <div class="teacher-courses">
+            <h2>Your Teaching Courses</h2>
+            <div class="courses-list">
+                {% for course in teacher_courses %}
+                <div class="course">
+                    <h3>{{ course.title }}</h3>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="explore-courses">
+        <h2>Explore Our Courses</h2>
+        <div class="courses-list">
+            {% for course in courses %}
+            <div class="course">
+                <a href="{% url 'courses:course_detail' course.id %}">
+                    <h3>{{ course.title }}</h3>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

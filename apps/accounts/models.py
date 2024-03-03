@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.templatetags.static import static
+
 
 
 class CustomUser(AbstractUser):
@@ -10,8 +12,7 @@ class CustomUser(AbstractUser):
         ('teacher', _('Teacher')),
     )
     user_type = models.CharField(max_length=7, choices=USER_TYPE_CHOICES, default='student', verbose_name=_("User Type"))
-
-    avatar = models.ImageField(upload_to='static/admin/img/', blank=True, null=True, verbose_name=_("Avatar"), default='static/admin/img/avatar.svg')
+    avatar = models.ImageField(upload_to='user/avatars/', blank=True, null=True, verbose_name=_("Avatar"))
     real_name = models.CharField(max_length=100, blank=True, verbose_name=_("Real Name"))
     birth_date = models.DateField(null=True, blank=True, verbose_name=_("Birth Date"))
     country = models.CharField(max_length=50, blank=True, verbose_name=_("Country"))
@@ -20,7 +21,7 @@ class CustomUser(AbstractUser):
         if self.avatar:
             return self.avatar.url
         else:
-            return settings.DEFAULT_AVATAR_URL
+            return static('admin/img/avatar.svg')
 
     def __str__(self):
         return self.username
