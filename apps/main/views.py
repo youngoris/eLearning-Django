@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from apps.courses.models import Course, Enrollment
+from apps.accounts.models import CustomUser
+from django.db.models import Q
 
 def home(request):
     courses = Course.objects.all()[:5]  # 举例，获取最新的5门课程
@@ -21,3 +23,20 @@ def home(request):
 
     return render(request, 'main/home.html', context)
 
+
+
+def search_results(request):
+    query = request.GET.get('query', '')
+    course_results = Course.objects.filter(title__icontains=query)
+    user_results = CustomUser.objects.filter(username__icontains=query)
+    if request.user.is_authenticated and request.user.user_type == 'teacher':
+        user_results = CustomUser.objects.filter(username__icontains=query)
+
+    context = {
+        'query': query,
+        'course_results': course_results,
+        'user_results': user_results,
+        'is_teacher': request.user.is_authenticated and request.user.user_type == 'teacher',
+    }
+    
+    return render(request, 'main/search_results.html', context)

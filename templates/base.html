@@ -12,8 +12,6 @@
     <link href="{% static 'admin/css/custom_styles.css' %}" rel="stylesheet">
     <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script>
     
-    {% block extra_css %}{% endblock extra_css %}
-
 </head>
 <body>
     <header>
@@ -48,8 +46,8 @@
                         <a class="nav-link" href="{% url 'register' %}">Register</a>
                         {% endif %}
                         <!-- Search form -->
-                        <form class="d-flex align-items-center"> <!-- 确保表单也垂直居中 -->
-                            <input class="form-control me-2" type="search" placeholder="What to learn?" aria-label="Search" style="height: 38px;"> <!-- 指定输入框高度 -->
+                        <form class="d-flex align-items-center" action="{% url 'search_results' %}" method="get"> 
+                            <input class="form-control me-2" type="text" name="query" placeholder="What to learn?" aria-label="Search" style="height: 38px;">
                             <button class="btn btn-outline-light" type="submit">Search</button>
                         </form>
                     </div>
@@ -65,8 +63,8 @@
         {% endblock content %}
     </main>
 
-    <footer class="bg-dark text-light py-4" style="margin-top: 50px;">
-        <div class="container">
+    <footer class="bg-dark text-light py-4 " style="margin-top: 50px;">
+        <div class="container  ml-5 mr-5">
             <div class="row">
                 <!-- About Section -->
                 <div class="col-md-3">

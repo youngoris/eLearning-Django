@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Result for "{{ query }}"</h2>
+    <div class="row">
+        <!-- Courses Result -->
+        <div class="col-lg-8">
+            <h3>Courses</h3>
+            <div class="card-deck">
+                {% for course in course_results %}
+                <div class="card mb-4" style="min-width: 18rem; max-width: 36rem;">
+                    {% if course.cover %}
+                    <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        <p class="card-text" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ course.description|truncatewords:20 }}</p>
+                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if not course_results %}
+            <p>No courses found</p>
+            {% endif %}
+        </div>
+
+        <!-- Users Result -->
+        <div class="col-lg-4">
+            <h3>Users</h3>
+            {% if is_teacher %}
+            <div class="list-group">
+                {% for user in user_results %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-start">
+                        <img src="{{ user.get_avatar_url }}" class="img-fluid rounded-circle mr-3" alt="User Avatar" style="width: 64px; height: 64px;">
+                        <div class="media-body">
+                            <h5 class="mb-1">{{ user.username }}</h5>
+                            <small>{{ user.user_type }}</small>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% if not user_results %}
+            <p>No users found</p>
+            {% endif %}
+            {% else %}
+            <p>Results just for teachers only.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

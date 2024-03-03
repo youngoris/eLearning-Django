@@ -74,7 +74,6 @@
                                 <span>: {{ comment.text }}</span>  
                             </div>
                         </div>
-                        <!-- 时间戳独立于comment-header外，使用绝对定位 -->
                         <p class="comment-timestamp mb-0">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
                     </div>
                     
@@ -84,9 +83,9 @@
         </div>
 
         <!-- Recommended Courses -->
-        <div class="col-md-4 card">
-            <div class="recommended-courses  ">
-                <h3 class="mb-3">Recommended</h3>
+        <div class="col-md-4 card ">
+            <div class="recommended-courses card-body">
+                <h3>Recommended</h3>
                 {% for recommended_course in recommended_courses %}
                 <div class="card mb-3">
                     <img src="{{ recommended_course.cover.url }}" class="card-img-top" alt="Course Cover">
