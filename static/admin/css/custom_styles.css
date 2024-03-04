@@ -84,3 +84,54 @@
 #navbarNotificationDropdown::after {
     display: none;
 }
+
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+}
+
+
+.banner {
+    background-color: #0056b3; /* 深蓝色背景 */
+    color: #fff;
+    padding: 60px 0;
+    text-align: center;
+}
+.banner h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+.banner p {
+    font-size: 1.5em;
+}
+.feature {
+    margin-top: 40px;
+}
+.feature h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.course-card {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.course-card img {
+    max-width: 100%;
+    height: auto;
+}

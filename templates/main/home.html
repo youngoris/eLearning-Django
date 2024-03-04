@@ -1,60 +1,33 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-{% comment %} <link href="{% static 'css/coursera_style.css' %}" rel="stylesheet"> {% endcomment %}
 {% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-    <div class="welcome-banner">
+    <div class="banner">
         <h1>Welcome to Our E-Learning Platform</h1>
-        {% if not request.user.is_authenticated %}
-        <p>Join us today and start learning!</p>
-        <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
-        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
-        {% endif %}
+        <p>Explore, Learn, and Achieve with Our Online Courses</p>
+        <a href="{% url 'register' %}" class="btn btn-light btn-lg">Join Now</a>
     </div>
 
-    {% if request.user.is_authenticated %}
-    <div class="user-specific-content">
-        {% if request.user.student_profile %}
-        <div class="student-courses">
-            <h2>Your Courses</h2>
-            <div class="courses-list">
-                {% for enrollment in student_enrollments %}
-                <div class="course">
-                    <h3>{{ enrollment.course.title }}</h3>
-                    <p>Status: {{ enrollment.status }}</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% elif request.user.teacher_profile %}
-        <div class="teacher-courses">
-            <h2>Your Teaching Courses</h2>
-            <div class="courses-list">
-                {% for course in teacher_courses %}
-                <div class="course">
-                    <h3>{{ course.title }}</h3>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
-
-    <div class="explore-courses">
-        <h2>Explore Our Courses</h2>
-        <div class="courses-list">
+    <div class="feature">
+        <h2>Featured Courses</h2>
+        <div class="row">
             {% for course in courses %}
-            <div class="course">
-                <a href="{% url 'courses:course_detail' course.id %}">
+            <div class="col-md-4">
+                <div class="course-card">
+                    <img src="https://via.placeholder.com/300" alt="Course Image">
                     <h3>{{ course.title }}</h3>
-                </a>
+                    <p>{{ course.description|truncatewords:20 }}</p>
+                    <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">Learn More</a>
+                </div>
             </div>
+            {% empty %}
+            <p>No courses found.</p>  <!-- 当courses为空时显示 -->
             {% endfor %}
         </div>
     </div>
+    
 </div>
 {% endblock %}

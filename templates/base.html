@@ -86,68 +86,66 @@
               </div>
             </div>
         </nav>
-          
-
     </header>
-
-    <main role="main" class="container mt-5">
-        {% block content %}
-        <!-- Content will be overridden in child templates -->
-        {% endblock content %}
-    </main>
-    
-
-
-    <footer class="bg-dark text-light py-4 " style="margin-top: 50px;">
-        <div class="container  ml-5 mr-5">
-            <div class="row">
-                <!-- About Section -->
-                <div class="col-md-3">
-                    <h5>About</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Our Story</a></li>
-                        <li><a href="#" class="text-light">Team</a></li>
-                        <li><a href="#" class="text-light">Careers</a></li>
-                    </ul>
-                </div>
-    
-                <!-- Courses Section -->
-                <div class="col-md-3">
-                    <h5>Courses</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Browse Courses</a></li>
-                        <li><a href="#" class="text-light">Categories</a></li>
-                        <li><a href="#" class="text-light">Certifications</a></li>
-                    </ul>
-                </div>
-    
-                <!-- Support Section -->
-                <div class="col-md-3">
-                    <h5>Support</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Contact Us</a></li>
-                        <li><a href="#" class="text-light">Help Center</a></li>
-                        <li><a href="#" class="text-light">Privacy Policy</a></li>
-                    </ul>
-                </div>
-    
-                <!-- Social Media Section -->
-                <div class="col-md-3">
-                    <h5>Follow Us</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-light">Facebook</a></li>
-                        <li><a href="#" class="text-light">Twitter</a></li>
-                        <li><a href="#" class="text-light">LinkedIn</a></li>
-                    </ul>
+    <div class="page-container">
+        <main role="main" class="container">
+            {% block content %}
+            <!-- Content will be overridden in child templates -->
+            {% endblock content %}
+        </main>
+        
+        <footer class="bg-dark text-light py-4 mt-auto">
+            <div class="container ">
+                <div class="row ">
+                    <!-- About Section -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase mb-3">About</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light text-decoration-none">Our Story</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Team</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Careers</a></li>
+                        </ul>
+                    </div>
+        
+                    <!-- Courses Section -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase mb-3">Courses</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light text-decoration-none">Browse Courses</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Categories</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Certifications</a></li>
+                        </ul>
+                    </div>
+        
+                    <!-- Support Section -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase mb-3">Support</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light text-decoration-none">Contact Us</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Help Center</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+        
+                    <!-- Social Media Section -->
+                    <div class="col-md-3">
+                        <h5 class="text-uppercase mb-3">Follow Us</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-light text-decoration-none">Facebook</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">Twitter</a></li>
+                            <li><a href="#" class="text-light text-decoration-none">LinkedIn</a></li>
+                        </ul>
+                    </div>
+                    <!-- CopyRight Section -->
+                    <div class="text-center mt-4">
+                        <p class="mb-0">© 2024 E-Learning. All rights reserved.</p>
+                    </div>
                 </div>
             </div>
-    
-            <!-- CopyRight Section -->
-            <div class="text-center mt-4">
-                <p>© 2024 E-Learning. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
+
+        
     <script>
         const chatSocket = new WebSocket(
             'ws://' + window.location.hostname + '/ws/chat/'
