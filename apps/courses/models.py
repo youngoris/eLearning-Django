@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.db.models import Avg
 
 
-
 from django.conf import settings
 
 
@@ -66,7 +65,6 @@ class Enrollment(models.Model):
     date_enrolled = models.DateField(auto_now_add=True, verbose_name="Date Enrolled")
     grade = models.CharField(max_length=2, blank=True, null=True)
     status = models.CharField(max_length=20, choices=[('active', 'Active'), ('completed', 'Completed')], default='active', verbose_name="Status")
-
 
     def __str__(self):
         return f"{self.student.username} enrolled in {self.course.title}"

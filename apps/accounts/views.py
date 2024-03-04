@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout, update_session_auth
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404
-from .models import CustomUser, StatusUpdate
+from .models import CustomUser, StatusUpdate, Notification
 from apps.courses.models import Course, Enrollment
 from django.utils import timezone
 
@@ -143,3 +143,18 @@ def status_update(request):
     return redirect('/')
 
 
+def send_notification_to_teacher(student, course):
+    # 假设 course 有一个 teacher 属性指向教师
+    Notification.objects.create(
+        recipient=course.teacher,
+        title="New student enrolled",
+        message=f"{student.username} has enrolled in your course {course.title}."
+    )
+
+def send_notification_to_students(course):
+    for student in course.students.all():
+        Notification.objects.create(
+            recipient=student,
+            title="Course updated",
+            message=f"{course.title} has been updated. Check out the new content!"
+        )

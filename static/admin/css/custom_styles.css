@@ -81,3 +81,6 @@
 }
 
 
+#navbarNotificationDropdown::after {
+    display: none;
+}
