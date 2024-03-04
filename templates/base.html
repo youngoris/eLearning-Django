@@ -38,7 +38,7 @@
                               </ul>
                         </li>
                     </ul>
-                    <form class="d-flex align-items-center" action="{% url 'search_results' %}" method="get">
+                    <form class="d-flex align-items-center me-3" action="{% url 'search_results' %}" method="get">
                         <div class="input-group">
                             <input class="form-control" type="search" placeholder="Courses, Users..." aria-label="Search" name="query">
                             <button class="btn input-group-text " type="submit" id="search-addon" style="background-color: #f8f9fa; border-color: #dddfe1;">
@@ -47,45 +47,42 @@
                         </div>
                     </form>
                     
-                <ul class="navbar-nav">
-                  {% if user.is_authenticated %}
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarNotificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {% if notifications|length > 0 %}
-                                <!-- 有通知时显示的图标 -->
-                                <img src="{% static 'admin/img/bell-alert-icon.svg' %}" alt="Notifications">
-                                <span class="badge bg-danger">{{ notifications|length }}</span>
-                            {% else %}
-                                <!-- 无通知时显示的图标 -->
-                                <img src="{% static 'admin/img/bell-icon.svg' %}" alt="No Notifications">
-                            {% endif %}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarNotificationDropdown">
-                            {% if notifications %}
-                                {% for notification in notifications %}
-                                    <li><a class="dropdown-item" href="{{ notification.url }}">{{ notification.message }}</a></li>
-                                {% endfor %}
-                            {% else %}
-                                <li><a class="dropdown-item" href="#">No notifications</a></li>
-                            {% endif %}
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{{ user.get_avatar_url }}" alt="Avatar" style="  width: 40px; height: 40px; border-radius: 50%;">
-                        {{ user.username }}
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
-                  {% endif %}
-                </ul>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown my-1 me-3">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarNotificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if notifications|length > 0 %}
+                                    <img src="{% static 'admin/img/bell-alert-icon.svg' %}" alt="Notifications">
+                                    <span class="badge bg-danger">{{ notifications|length }}</span>
+                                {% else %}
+                                    <img src="{% static 'admin/img/bell-icon.svg' %}" alt="No Notifications">
+                                {% endif %}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarNotificationDropdown">
+                                {% if notifications %}
+                                    {% for notification in notifications %}
+                                        <li><a class="dropdown-item" href="{{ notification.url }}">{{ notification.message }}</a></li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li><a class="dropdown-item" href="#">No notifications</a></li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{{ user.get_avatar_url }}" alt="Avatar" style="  width: 40px; height: 40px; border-radius: 50%;">
+                            {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                        {% endif %}
+                    </ul>
               </div>
             </div>
         </nav>
@@ -175,7 +172,6 @@
             messageInputDom.value = '';
         };
     </script>
-    
     
     <!-- Bootstrap Bundle with Popper -->
     {% comment %} <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script> {% endcomment %}
