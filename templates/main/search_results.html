@@ -32,7 +32,7 @@
             {% if is_teacher %}
             <div class="list-group">
                 {% for user in user_results %}
-                <a href="#" class="list-group-item list-group-item-action">
+                <a href="{% url 'user_home' user.username %}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-start">
                         <img src="{{ user.get_avatar_url }}" class="img-fluid rounded-circle mr-3" alt="User Avatar" style="width: 64px; height: 64px;">
                         <div class="media-body">

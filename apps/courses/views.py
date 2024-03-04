@@ -42,6 +42,16 @@ def enroll_in_course(request, id):
     return redirect('courses:course_detail', id=id)
 
 
+def add_course(request):
+    if request.method == 'POST':
+        form = CourseForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_course = form.save()  # 保存表单并获取新创建的课程实例
+            return redirect('courses:course_detail', id=new_course.id)  # 重定向到新课程的详情页面
+    else:
+        form = CourseForm()
+    return render(request, 'courses/add_course.html', {'form': form})
+
 @login_required
 def edit_course(request, id):
     course = get_object_or_404(Course, id=id)

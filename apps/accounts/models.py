@@ -25,3 +25,12 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class StatusUpdate(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()  # 确保有这个字段
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Status update by {self.user.username} on {self.created_at}"

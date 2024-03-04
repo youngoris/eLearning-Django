@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from apps.courses.models import Course, Enrollment
 from apps.accounts.models import CustomUser
@@ -39,3 +39,9 @@ def search_results(request):
     }
     
     return render(request, 'main/search_results.html', context)
+
+def homepage_view(request):
+    if request.user.is_authenticated:
+        return redirect('user_home', username=request.user.username)  # 假设'user_home'是用户主页的URL名称
+    # 渲染网站首页模板
+    return render(request, 'main/home.html')

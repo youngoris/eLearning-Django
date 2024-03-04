@@ -13,27 +13,25 @@
     <link href="{% static 'admin/css/avatar.min.css' %}" rel="stylesheet">
     <link href="{% static 'admin/css/custom_styles.css' %}" rel="stylesheet">
     
-
-    
 </head>
 <body>
     <header>
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-custom">
-            <div class="container-fluid container ml-5 mr-5">
+        <nav class="navbar navbar-expand-lg navbar-custom " >
+            <div class="container-fluid container ml-5 mr-5 ">
                 <a class="navbar-brand" href="{% url 'home' %}">
                     <img src="{% static 'admin/img/logo.png' %}" alt="eLearning Logo" style="width: 60px;"> E-Learning
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-theme="dark" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item dropdown">
-                            <a class="btn btn-outline-light dropdown-toggle me-2" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="btn btn-outline-light dropdown-toggle me-2 my-1 " href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Explore
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <ul class="dropdown-menu mb-3" aria-labelledby="navbarDropdownMenuLink">
                                 {% for category in categories %}
                                 <li><a class="dropdown-item" href="{% url 'courses:category_courses' category.id %}">{{ category.name }}</a></li>
                                 {% endfor %}
@@ -43,7 +41,7 @@
                     <form class="d-flex align-items-center" action="{% url 'search_results' %}" method="get">
                         <div class="input-group">
                             <input class="form-control" type="search" placeholder="Courses, Users..." aria-label="Search" name="query">
-                            <button class="btn input-group-text" type="submit" id="search-addon" style="background-color: #f8f9fa; border-color: #dddfe1;">
+                            <button class="btn input-group-text " type="submit" id="search-addon" style="background-color: #f8f9fa; border-color: #dddfe1;">
                                 <img src="{% static 'admin/img/search.svg' %}" alt="Search" style="width: 20px; height: 25px">
                             </button>
                         </div>
@@ -51,19 +49,19 @@
                     
                 <ul class="navbar-nav">
                   {% if user.is_authenticated %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ user.get_avatar_url }}" alt="Avatar" style="  width: 40px; height: 40px; border-radius: 50%;">
-                      {{ user.username }}
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
-                      <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                    </ul>
-                  </li>
-                  {% else %}
-                  <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="{{ user.get_avatar_url }}" alt="Avatar" style="  width: 40px; height: 40px; border-radius: 50%;">
+                        {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
                   {% endif %}
                 </ul>
               </div>
@@ -78,6 +76,8 @@
         <!-- Content will be overridden in child templates -->
         {% endblock content %}
     </main>
+    
+
 
     <footer class="bg-dark text-light py-4 " style="margin-top: 50px;">
         <div class="container  ml-5 mr-5">
@@ -129,6 +129,31 @@
             </div>
         </div>
     </footer>
+    <script>
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.hostname + '/ws/chat/'
+        );
+    
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        };
+    
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+    
     
     <!-- Bootstrap Bundle with Popper -->
     {% comment %} <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script> {% endcomment %}

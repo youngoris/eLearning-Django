@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm, CustomUserEditForm
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
+from .models import CustomUser, StatusUpdate
+from apps.courses.models import Course, Enrollment
+from django.utils import timezone
 
 
 def register(request):
@@ -90,3 +93,53 @@ def logout_view(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")  # Optional: add a success message
     return redirect('home')  # Redirect to homepage or login page
+
+@login_required
+def user_home(request, username):
+    user = get_object_or_404(CustomUser, username=username)
+    status_updates = StatusUpdate.objects.filter(user=user).order_by('-created_at')
+
+    # 初始化变量，以避免UnboundLocalError
+    my_courses = []
+    available_courses = []
+    my_students = []
+    upcoming_deadlines = []
+
+    if user.user_type == 'student':
+        enrollments = Enrollment.objects.filter(student=user)
+        my_courses = [enrollment.course for enrollment in enrollments]
+        upcoming_deadlines = Course.objects.filter(
+            enrollments__in=enrollments,
+            end_date__gt=timezone.now()
+        ).distinct().order_by('end_date')[:5]
+        available_courses = Course.objects.exclude(id__in=[course.id for course in my_courses])
+
+    elif user.user_type == 'teacher':
+        my_courses = user.authored_courses.all()
+        my_students = CustomUser.objects.filter(
+            enrollments__course__teacher=user
+        ).distinct()
+
+    context = {
+        'user_profile': user,
+        'status_updates': status_updates,
+        'my_courses': my_courses,
+        'upcoming_deadlines': upcoming_deadlines if user.user_type == 'student' else None,
+        'available_courses': available_courses if user.user_type == 'student' else None,
+        'my_students': my_students if user.user_type == 'teacher' else None,
+    }
+
+    return render(request, 'accounts/user_home.html', context)
+
+def status_update(request):
+    if request.method == "POST":
+        # 处理状态更新逻辑
+        text = request.POST.get('status', '')
+        if text:
+            StatusUpdate.objects.create(user=request.user, text=text)
+            messages.success(request, "Status updated successfully.")
+        else:
+            messages.error(request, "Status cannot be empty.")
+    return redirect('/')
+
+
