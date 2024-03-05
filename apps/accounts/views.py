@@ -8,6 +8,8 @@ from django.shortcuts import render, get_object_or_404
 from .models import CustomUser, StatusUpdate, Notification
 from apps.courses.models import Course, Enrollment
 from django.utils import timezone
+from django.http import HttpResponseRedirect
+
 
 
 def register(request):
@@ -158,3 +160,18 @@ def send_notification_to_students(course):
             title="Course updated",
             message=f"{course.title} has been updated. Check out the new content!"
         )
+
+@login_required
+def block_student(request, student_id):
+    student = get_object_or_404(CustomUser, id=student_id)
+    # 确保当前登录的用户是教师
+    if request.user.user_type == 'teacher':
+        # 获取当前教师的所有课程
+        courses = Course.objects.filter(teacher=request.user)
+        # 对于每个课程，取消学生的注册
+        for course in courses:
+            Enrollment.objects.filter(student=student, course=course).delete()
+        messages.success(request, f'{student.username} has been blocked and unenrolled from all your courses.')
+    else:
+        messages.error(request, 'You do not have permission to perform this action.')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))

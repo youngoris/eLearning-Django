@@ -27,6 +27,7 @@ class Language(models.Model):
 
     def __str__(self):
         return self.name
+    
 
 
 class Course(models.Model):
@@ -37,7 +38,6 @@ class Course(models.Model):
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, verbose_name="Language")
     cover = models.ImageField(upload_to='courses/covers/', blank=True, null=True, verbose_name="Course Cover")
     videos = models.FileField(upload_to='courses/videos/', blank=True, null=True, verbose_name="Course Videos")
-    materials = models.FileField(upload_to='courses/materials/', blank=True, null=True, verbose_name="Course Materials")
     start_date = models.DateField(verbose_name="Start Date")
     end_date = models.DateField(verbose_name="End Date")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
@@ -47,6 +47,15 @@ class Course(models.Model):
     
     def average_rating(self):
         return self.comments.aggregate(Avg('rating'))['rating__avg'] or 0
+    
+
+class Material(models.Model):
+    course = models.ForeignKey(Course, related_name='materials', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, blank=True, null=True)
+    file = models.FileField(upload_to='courses/materials/', blank=True, null=True, verbose_name="Course Material")
+
+    def __str__(self):
+        return self.name or "Material"
 
 class Comment(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='comments', verbose_name="Course")
@@ -69,3 +78,11 @@ class Enrollment(models.Model):
     def __str__(self):
         return f"{self.student.username} enrolled in {self.course.title}"
     
+class TeacherFile(models.Model):
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='uploaded_files')
+    file = models.FileField(upload_to='teacher_files/', blank=False, null=False)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"File uploaded by {self.teacher.username} on {self.uploaded_at}"
+

@@ -3,25 +3,47 @@
 {% block content %}
 <div class="container mt-5">
     <!-- 用户角色判断 -->
-    {% if user.user_type == 'student' %}
-        <div class="container mt-5">
-            <div class="row">
-                <!-- 左侧列：状态和截止日期 -->
-                <div class="col-lg-4 mb-4">
+    <div class="container mt-5">
+        <div class="row">
+            <!-- 左侧列：状态和截止日期 -->
+            <div class="col-lg-4 mb-4">
+
+                <!-- 用户信息展示区 -->
+                <div class="card user-info mb-4 text-center">
+                    <div class="card-body">
+                        <img src="{{ user_profile.get_avatar_url }}" class="rounded-circle" alt="User Avatar" style="width: 100px; height: 100px;">
+                        <h3>{{ user_profile.real_name | default:user_profile.username }}</h3>
+                        <a>{{ user_profile.user_type }}</a>
+                        <p>{{ user_profile.email }}</p>
+
+                        {% if request.user != user_profile %}
+                            <!-- 发送信息按钮（需要实现发送信息的逻辑） -->
+                            <button class="btn btn-primary">Send Message</button>
+                        {%else%}
+                            <!-- 发送信息按钮（需要实现发送信息的逻辑） -->
+                            <button class="btn btn-primary">Open Chatbox</button>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+                {% if user_profile.user_type == 'student' %}
                     <!-- 状态更新卡片 -->
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5>Status Updates</h5>
                         </div>
-                        <div class="card-body">
-                            <form action="{% url 'status_update_url' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="mb-3">
-                                    <textarea class="form-control" name="status" rows="2" placeholder="What's on your mind?"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Post</button>
-                            </form>
-                        </div>
+                        {% if request.user == user_profile %}
+                            <div class="card-body">
+                                <form action="{% url 'status_update_url' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        <textarea class="form-control" name="status" rows="2" placeholder="What's on your mind?"></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Post</button>
+                                </form>
+                            </div>
+                        {% endif %}
                         <ul class="list-group list-group-flush">
                             {% for status in status_updates %}
                             <li class="list-group-item">{{ status.text }} <br> <small>{{ status.created_at }}</small></li>
@@ -29,43 +51,87 @@
                         </ul>
                     </div>
                 
-                <!-- 截止日期卡片 -->
-                <div class="card mb-3">
-                    <div class="card-header">
-                        <h5>Upcoming Deadlines</h5>
+
+                    <!-- 截止日期卡片 -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Upcoming Deadlines</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% if upcoming_deadlines %}
+                                {% for deadline in upcoming_deadlines %}
+                                    <li class="list-group-item">
+                                        <small>{{ deadline.end_date|date:"Y-m-d" }}</small><br>
+                                        <a href="{% url 'courses:course_detail' deadline.id %}">{{ deadline.title }}</a> 
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">No upcoming deadlines. Please enroll in some courses.</li>
+                            {% endif %}
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% if upcoming_deadlines %}
-                            {% for deadline in upcoming_deadlines %}
-                                <li class="list-group-item">
-                                    <small>{{ deadline.end_date|date:"Y-m-d" }}</small><br>
-                                    <a href="{% url 'courses:course_detail' deadline.id %}">{{ deadline.title }}</a> 
-                                </li>
+
+                    {% elif user_profile.user_type == 'teacher' %}
+
+                    <div class="card">
+                        <div class="card-header">
+                            {% if request.user == user_profile %}
+                            <h5>My Students</h5>
+                            {% else %}
+                            <h5>{{ user_profile.real_name | default:user_profile.username }}'s Students</h5>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="list-group">
+                            {% for student in my_students %}
+                            <!-- List Group Item -->
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <!-- Left Side: Avatar and Username -->
+                                <a href="{% url 'user_home' student.username %}" class="d-flex align-items-center">
+                                    <img src="{{ student.get_avatar_url }}" class="rounded-circle" alt="User Avatar" style="width: 50px; height: 50px; margin-right: 15px;">
+                                    <span>{{ student.username }}</span>
+                                </a>
+                            
+                                <!-- Right Side: Block Button -->
+                                {% if request.user.user_type == 'teacher' %}
+                                <a href="{% url 'block_student' student.id %}" class="btn btn-sm btn-outline-warning">Remove</a>
+                                {% endif %}
+                            </div>
                             {% endfor %}
-                        {% else %}
-                            <li class="list-group-item">No upcoming deadlines. Please enroll in some courses.</li>
-                        {% endif %}
-                    </ul>
-                </div>
+                            
+                        </div>
+                    </div>
+                    
+                    {% endif %}
+                    
+                  
+                    
             </div>
-        
+
+
+
+            {% if user_profile.user_type == 'student' %}
                 <!-- 右侧列：我的课程和可用课程 -->
                 <div class="col-lg-8 ">
                     <!-- 我的课程卡片 -->
                     <div class="card mb-4">
                         <div class="card-header">
-                            <h5>My Courses</h5>
+                            {% if request.user == user_profile %}
+                            <h5>My Enrolled Courses</h5>
+                            {% else %}
+                                <h5>{{ user_profile.real_name | default:user_profile.username }}'s Courses</h5>
+                            {% endif %}
                         </div>
-                        <div class="row  card-body justify-content-evenly">
+                        <div class="row card-body">
                             {% for course in my_courses %}
-                            <div class="col-md-6 my-2">
-                                <div class="card h-100">
+                            <div class="col-md-12 my-2">
+                                <div class="card h-100 d-flex flex-row">
                                     {% if course.cover %}
-                                    <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover">
+                                    <img src="{{ course.cover.url }}" class="card-img-left" alt="Course Cover" style="width: 200px; height: auto; object-fit: contain;">
                                     {% endif %}
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ course.title }}</h5>
-                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                                    <div class="card-body flex-grow-1">
+                                        <h5 class="card-title" style="font-size: 18px;">{{ course.title }}</h5>
+                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary float-right">View Course</a>
                                     </div>
                                 </div>
                             </div>
@@ -73,68 +139,125 @@
                         </div>
                     </div>
                     
+                    
+                    {% if request.user == user_profile %}
                     <!-- 可用课程卡片 -->
                     <div class="card">
                         <div class="card-header">
                             <h5>Available Courses</h5>
                         </div>
-                        <div class="row">
+                        <div class="row card-body">
                             {% for course in available_courses %}
                             <div class="col-md-6 mb-4">
                                 <div class="card h-100">
                                     {% if course.cover %}
-                                    <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover">
+                                    <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
                                     {% endif %}
                                     <div class="card-body">
                                         <h5 class="card-title">{{ course.title }}</h5>
-                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">Enroll</a>
+                                        <p class="card-text text-truncate" style="max-height: 3rem;">{{ course.category.name }} | {{ course.teacher.real_name }}</p>
+                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View Course</a>
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
-
-
+                {% endif %}
                 </div>
-            </div>
-        </div>
-    {% elif user.user_type == 'teacher' %}
-        <div class="row">
-        <!-- 我的课程 -->
-        <div class="col-lg-6 mb-4">
-            <div class="card">
-                <div class="card-header">
-                    <h5>My Courses</h5>
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for course in my_courses %}
-                    <li class="list-group-item">
-                        <a href="{% url 'courses:course_detail' course.id %}">{{ course.title }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-            <!-- 我的学生 -->
-            <div class="col-lg-6 mb-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>My Students</h5>
+
+                {% elif user_profile.user_type == 'teacher' %}
+                <div class="col-lg-6 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            {% if request.user == user_profile %}
+                            <h5>My Courses</h5>
+                            {% else %}
+                                <h5>{{ user_profile.real_name | default:user_profile.username }}'s Courses</h5>
+                            {% endif %}
+                            {% if user.user_type == 'teacher' and request.user == user_profile %}
+                                <a href="{% url 'courses:add_course' %}" class="btn btn-success">Add New Course</a>
+                            {% endif %}
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for course in my_courses %}
+                            <li class="list-group-item">
+                                <a href="{% url 'courses:course_detail' course.id %}">{{ course.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        {% for student in my_students %}
-                        <li class="list-group-item">{{ student.username }}</li>
-                        {% endfor %}
-                    </ul>
+                    <!-- Upload files-->
+                    {% if user.user_type == 'teacher' and request.user == user_profile %}
+                    <!-- Uploaded Files Section -->
+                    <div class="card my-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>Uploaded Files</h5>
+                            <button id="showUploadForm" class="btn btn-success">Add Files</button>
+                        </div>
+                        <ul class="list-group list-group-flush" id="uploadedFilesList">
+                            {% for file in request.user.uploaded_files.all %}
+                            <li class="list-group-item">
+                                <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- File Upload Form (Initially hidden) -->
+                    <div class="card mb-3" id="uploadFormContainer" style="display: none;">
+                        <div class="card-body">
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="fileField">Select file</label>
+                                    <input type="file" class="form-control-file" id="fileField" name="file">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Upload</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-            </div>
+                
+            
+            {% endif %}
+            
         </div>
-            <!-- 添加新课程按钮 -->
-        <div class="text-right mb-4">
-            <a href="{% url 'courses:add_course' %}" class="btn btn-success">Add New Course</a>
-        </div>
-    {% endif %}
+    </div>
+
 </div>
+
+<script>
+    // JavaScript to handle form show/hide and file upload
+    document.getElementById('showUploadForm').addEventListener('click', function() {
+        document.getElementById('uploadFormContainer').style.display = 'block';
+    });
+    
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        fetch('{% url "courses:upload_teacher_file_url_name" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Append the new file to the list
+                var newListElement = `<li class="list-group-item"><a href="${data.file_url}" target="_blank">${data.file_name}</a></li>`;
+                document.getElementById('uploadedFilesList').innerHTML += newListElement;
+                // Optionally, hide the upload form again
+                document.getElementById('uploadFormContainer').style.display = 'none';
+            } else {
+                // Handle errors (e.g., display an error message)
+                console.error('File upload failed.');
+            }
+        });
+    });
+    </script>
 
 {% endblock %}

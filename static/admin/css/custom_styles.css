@@ -135,3 +135,39 @@ footer {
     max-width: 100%;
     height: auto;
 }
+
+
+.btn-sm-user {
+    height: 30px;
+    margin: auto；
+}
+
+.student-name-small {
+    font-size: 14px; /* You can adjust the font size as needed */
+}
+
+
+.material-select {
+    font-size: 0.8rem; /* 调整选框内文字大小 */
+}
+
+#downloadBtn {
+    height: 38px; /* 保持下载按钮的高度与下拉选框一致 */
+    width: 100%; /* 可选，确保按钮宽度填满容器 */
+}
+
+
+.download-btn {
+    display: inline-block;
+    background-color: #4f4f50; /* Bootstrap primary color */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    height: auto;
+}
+
+.download-btn img {
+    width: 20px;
+    height: 20px;
+}

@@ -25,7 +25,7 @@
             <div class=" card mb-3">
                 <div class="  card-body">
                     <p class="card-text"><strong>Description:</strong> {{ course.description }}</p>
-                    <p class="card-text"><strong>Teacher:</strong> {{ course.teacher }}</p>
+                    <p class="card-text"><strong>Teacher:</strong> {{ course.teacher.real_name|default:course.teacher.username }}</p>
                     <p class="card-text"><strong>Category:</strong> {{ course.category.name }}</p>
                     <p class="card-text"><strong>Language:</strong> {{ course.language.name }}</p>
                     <p class="card-text"><strong>Start Date:</strong> {{ course.start_date }}</p>
@@ -34,7 +34,7 @@
                     <!-- Enroll button for students -->
                     {% if user.is_authenticated and user.user_type == 'student' %}
                         {% if not is_enrolled %}
-                            <form action="{% url 'enroll_in_course' course.id %}" method="post">
+                            <form action="{% url 'courses:enroll_in_course' course.id %}" method="post">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-primary">Enroll</button>
                             </form>
@@ -70,8 +70,8 @@
                                 <img class="avatar bg-light rounded-circle text-white p-0 mr-3" src="{{ comment.user.get_avatar_url }}" alt="avatar">         
                             </div>
                             <div class="comment-info">
-                                <strong>@{{ comment.user.username }}</strong>
-                                <span>: {{ comment.text }}</span>  
+                                <strong>{{ comment.user.username }}:</strong>
+                                <span>{{ comment.text }}</span>  
                             </div>
                         </div>
                         <p class="comment-timestamp mb-0">{{ comment.created_at|date:"F j, Y, g:i a" }}</p>
@@ -82,22 +82,78 @@
             </div>
         </div>
 
-        <!-- Recommended Courses -->
-        <div class="col-md-4 card ">
-            <div class="recommended-courses card-body">
-                <h3>Recommended</h3>
-                {% for recommended_course in recommended_courses %}
-                <div class="card mb-3">
-                    <img src="{{ recommended_course.cover.url }}" class="card-img-top" alt="Course Cover">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ recommended_course.title }}</h5>
-                        <p class="card-text"><small class="text-muted">By {{ recommended_course.teacher }}</small></p>
-                        <a href="{% url 'courses:course_detail' recommended_course.id %}" class="btn btn-primary">View Course</a>
+        <!-- Sidebar: Materials and Recommended Courses -->
+        <div class="col-md-4">
+            <!-- Course Materials -->
+            <div class="course-materials card mb-4">
+                <div class="card-header">
+                    <h3>Materials</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-9">
+                            <select class="custom-select" id="materialSelect" style="width: 100%; height: 38px;">
+                                <option selected>Choose To Download...</option>
+                                {% for material in course.materials.all %}
+                                <option value="{{ material.file.url }}">{{ material.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <button class="btn btn-primary download-btn" id="downloadBtn">
+                                <img src="{% static 'admin/img/download.svg' %}" alt="Download" style="width: 20px; height: 20px;">
+                            </button>                 
+                        </div>
                     </div>
                 </div>
-                {% endfor %}
+            </div>
+            
+
+            <!-- Recommended Courses -->
+            <div class="recommended-courses card">
+                <div class="card-header">
+                    <h3>Recommended</h3>
+                </div>
+                <div class="card-body">
+                    {% for recommended_course in recommended_courses %}
+                    <div class="card mb-3">
+                        <img src="{{ recommended_course.cover.url }}" class="card-img-top" alt="Course Cover">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ recommended_course.title }}</h5>
+                            <p class="card-text"><small class="text-muted">By {{ recommended_course.teacher }}</small></p>
+                            <a href="{% url 'courses:course_detail' recommended_course.id %}" class="btn btn-primary">View Course</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var materialSelect = document.getElementById('materialSelect');
+        var downloadBtn = document.getElementById('downloadBtn');
+    
+        var selectedMaterialUrl = ''; // 用于存储选中的材料URL
+    
+        // 监听选择框的变化
+        materialSelect.addEventListener('change', function() {
+            selectedMaterialUrl = this.value; // 更新选中的材料URL
+        });
+    
+        // 监听下载按钮的点击事件
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // 阻止按钮的默认行为
+            if (selectedMaterialUrl) {
+                window.location.href = selectedMaterialUrl; // 触发下载
+            } else {
+                alert('Please select a material to download.');
+            }
+        });
+    });
+    
+</script>
+
 {% endblock %}

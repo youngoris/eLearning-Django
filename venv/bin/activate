@@ -35,7 +35,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/heyonggang/Library/Mobile Documents/com~apple~CloudDocs/UoL/Exam/Midterm Assignments/DADT/eLearning-Django/venv"
+VIRTUAL_ENV="/Users/heyonggang/Documents/GitHub/eLearning-Django/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
