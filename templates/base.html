@@ -103,6 +103,34 @@
         </main>
     </div>
 
+    <div class="container mt-5">
+        <div id="chat-plugin" class="chat-container">
+            <div class="chat-header">
+                <h4>Chat in {{ room_name|default:"Public Room" }}</h4>
+            </div>
+    
+            <div class="chat-room-selector">
+                <label for="room-selector">Choose a chat room:</label>
+                <select id="room-selector">
+                    <option value="Public Room">Public Room</option>
+                    {% for room in rooms %}
+                    <option value="{{ room.title }}">{{ room.title }}</option>
+                    {% endfor %}
+                </select>
+                <button id="create-room-button">Create New Room</button>
+            </div>
+            
+            <div id="chat-messages" class="chat-messages">
+                <!-- 聊天消息将动态添加到这里 -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type a message..." autofocus>
+                <button id="chat-message-send">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    
 
     
     <footer class="mt-auto py-3 bg-dark text-white-50">
@@ -151,30 +179,56 @@
     </footer>
         
         
+
     <script>
-        const chatSocket = new WebSocket(
-            'ws://' + window.location.hostname + '/ws/chat/'
-        );
+        // 初始化变量
+        let currentRoomName = "Public Room"; // 默认聊天室
     
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
-        };
+        // WebSocket连接函数
+        function connectWebSocket(roomName) {
+            const chatSocket = new WebSocket(
+                `ws://${window.location.host}/ws/chat/${roomName}/`
+            );
     
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                document.querySelector('#chat-messages').innerHTML += `<p><strong>${data.username || "匿名用户"}:</strong> ${data.message}</p>`;
+            };
     
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+    
+            document.querySelector('#chat-message-send').onclick = function(e) {
+                const messageInputDom = document.querySelector('#chat-message-input');
+                const message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'username': "{{ request.user.username }}", // 发送用户名
+                }));
+                messageInputDom.value = '';
+            };
+    
+            document.querySelector('#chat-message-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    document.querySelector('#chat-message-send').click();
+                    e.preventDefault();
+                }
+            });
+        }
+    
+        // 初始连接WebSocket
+        connectWebSocket(currentRoomName);
+    
+        // 聊天室选择逻辑
+        document.querySelector('#room-selector').addEventListener('change', function(e) {
+            currentRoomName = this.value; // 更新当前聊天室
+            document.querySelector('#chat-messages').innerHTML = ''; // 清空聊天记录
+            connectWebSocket(currentRoomName); // 重新连接WebSocket
+        });
+    
     </script>
+    
     
     <!-- Bootstrap Bundle with Popper -->
     {% comment %} <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script> {% endcomment %}

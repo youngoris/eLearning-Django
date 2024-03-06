@@ -21,8 +21,7 @@
                             <button class="btn btn-primary">Send Message</button>
                         {%else%}
                             <!-- 发送信息按钮（需要实现发送信息的逻辑） -->
-                            <button class="btn btn-primary">Open Chatbox</button>
-                        {% endif %}
+                            <a href="{% url 'profile' %}" class="btn btn-primary float-right">Edit</a>                        {% endif %}
                     </div>
 
                 </div>

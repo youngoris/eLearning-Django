@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from apps.courses.models import Course
 from apps.accounts.models import CustomUser
+from .models import ChatRoom
+from django.http import JsonResponse
+
 
 
 def home(request):
@@ -31,3 +34,31 @@ def homepage_view(request):
         return redirect('user_home', username=request.user.username)  # 假设'user_home'是用户主页的URL名称
     # 渲染网站首页模板
     return render(request, 'main/home.html')
+
+
+def chat_room(request, room_name):
+    if not room_name:
+        # 如果没有指定聊天室，重定向到默认的公共聊天室
+        room_name = 'Public Room'
+    room, created = ChatRoom.objects.get_or_create(title=room_name)
+    rooms = ChatRoom.objects.filter(members=request.user).exclude(title='Public Room')
+    return render(request, 'chat/room.html', {
+        'room_name': room_name,
+        'rooms': rooms
+    })
+
+
+def create_chat_room(request):
+    # 假设前端通过POST请求发送聊天室名称
+    room_name = request.POST.get('room_name')
+    room, created = ChatRoom.objects.get_or_create(title=room_name)
+    if created:
+        # 聊天室创建成功
+        return JsonResponse({'status': 'success', 'room_name': room.title})
+    else:
+        # 聊天室已存在
+        return JsonResponse({'status': 'exists', 'room_name': room.title})
+    
+def chat_view(request, room_name=None):
+    if not room_name:
+        return redirect('chat_view', room_name='Public Room')
