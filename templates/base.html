@@ -12,6 +12,8 @@
     <link href="{% static 'admin/css/custom_styles.css' %}" rel="stylesheet">
 
     <script src="{% static 'admin/js/bootstrap.bundle.min.js' %}"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'admin/img/favicon.ico' %}">
+
     
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -49,6 +51,7 @@
                     
                     <ul class="navbar-nav">
                         {% if user.is_authenticated %}
+                        <!-- 通知下拉菜单项 -->
                         <li class="nav-item dropdown my-1 me-3">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarNotificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if notifications|length > 0 %}
@@ -61,7 +64,11 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarNotificationDropdown">
                                 {% if notifications %}
                                     {% for notification in notifications %}
-                                        <li><a class="dropdown-item" href="{{ notification.url }}">{{ notification.message }}</a></li>
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'mark_notification_as_read' notification.id %}">
+                                                {{ notification.message }}
+                                            </a>
+                                        </li>
                                     {% endfor %}
                                 {% else %}
                                     <li><a class="dropdown-item" href="#">No notifications</a></li>
@@ -70,7 +77,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="{{ user.get_avatar_url }}" alt="Avatar" style="  width: 40px; height: 40px; border-radius: 50%;">
+                                <img src="{{ user.get_avatar_url }}" alt="Avatar" class="avatar-nav">
                             {{ user.username }}
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">

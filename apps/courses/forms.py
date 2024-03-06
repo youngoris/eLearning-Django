@@ -8,8 +8,8 @@ class CourseForm(forms.ModelForm):
         model = Course
         fields = ['title', 'description', 'category', 'language', 'start_date', 'end_date', 'cover', 'videos']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control date-input'}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control date-input'}),
         }
 
 class MaterialForm(forms.ModelForm):

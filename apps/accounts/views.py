@@ -10,8 +10,6 @@ from apps.courses.models import Course, Enrollment
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 
-
-
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -144,22 +142,12 @@ def status_update(request):
             messages.error(request, "Status cannot be empty.")
     return redirect('/')
 
-
-def send_notification_to_teacher(student, course):
-    # 假设 course 有一个 teacher 属性指向教师
-    Notification.objects.create(
-        recipient=course.teacher,
-        title="New student enrolled",
-        message=f"{student.username} has enrolled in your course {course.title}."
-    )
-
-def send_notification_to_students(course):
-    for student in course.students.all():
-        Notification.objects.create(
-            recipient=student,
-            title="Course updated",
-            message=f"{course.title} has been updated. Check out the new content!"
-        )
+def mark_notification_as_read(request, notification_id):
+    notification = get_object_or_404(Notification, id=notification_id)
+    notification.read = True
+    notification.save()
+    # 重定向到通知关联的URL或某个默认页面
+    return redirect(notification.url)
 
 @login_required
 def block_student(request, student_id):

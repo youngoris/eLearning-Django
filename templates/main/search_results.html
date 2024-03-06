@@ -11,19 +11,22 @@
                 <h3>Courses</h3>
                 <div class="row">
                     {% for course in course_results %}
-                    <div class="col-md-6 mb-4"> <!-- 保持每行显示两个课程 -->
-                        <div class="card">
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 d-flex flex-column"> <!-- 使用Flex布局和垂直方向 -->
                             {% if course.cover %}
                             <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
                             {% endif %}
-                            <div class="card-body">
+                            <div class="card-body flex-grow-1"> <!-- 允许内容区域扩展 -->
                                 <h5 class="card-title">{{ course.title }}</h5>
                                 <p class="card-text">{{ course.description|truncatewords:20 }}</p>
-                                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0"> <!-- 按钮置底，无边框背景透明 -->
+                                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100">View Course</a> <!-- 宽度100% -->
                             </div>
                         </div>
                     </div>
                     {% endfor %}
+                    
                 </div>
                 {% if not course_results %}
                 <p>No courses found</p>

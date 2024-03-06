@@ -46,19 +46,28 @@
 }
 
 .avatar {
-    margin-left: 10px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; /* 确保图片为圆形 */
-    object-fit: cover; /* 确保图片内容适合容器 */
-}
-
-.avatar-nav {
-    margin-left: 10px;
     width: 40px;
     height: 40px;
     border-radius: 50%; /* 确保图片为圆形 */
     object-fit: cover; /* 确保图片内容适合容器 */
+    background-color: #fff;
+}
+
+.avatar-nav {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* 确保图片为圆形 */
+    object-fit: cover; /* 确保图片内容适合容器 */
+    background-color: #fff;
+}
+
+.avatar-list {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* 确保图片为圆形 */
+    object-fit: cover; /* 确保图片内容适合容器 */
+    background-color: #ffffff;
+    padding: 3px;
 }
 
 .comment-header {
@@ -170,4 +179,27 @@ footer {
 .download-btn img {
     width: 20px;
     height: 20px;
+}
+
+.date-input {
+    max-width: 250px; /* 或任何你想要的宽度 */
+}
+
+
+/* 确保卡片内容不会溢出 */
+.card-body {
+    overflow: hidden;
+}
+
+/* 文字溢出显示省略号 */
+.card-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* 限制为显示3行 */
+    overflow: hidden;
+}
+
+/* 确保卡片底部按钮固定 */
+.card-footer {
+    margin-top: auto; /* 自动推到底部 */
 }

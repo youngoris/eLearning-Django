@@ -1,6 +1,38 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
+<!-- 这里可以添加一些额外的CSS样式，如果需要的话 -->
+{% comment %} <style>
+    .banner {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .feature {
+        margin-top: 40px;
+    }
+
+    .course-card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        border-radius: 5px; /* 边框圆角 */
+    }
+
+    .course-card img {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        width: 100%;
+        height: auto;
+    }
+
+    .course-card-container {
+        padding: 16px;
+    }
+
+    .course-card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+</style> {% endcomment %}
 {% endblock %}
 
 {% block content %}
@@ -15,17 +47,21 @@
         <h2>Featured Courses</h2>
         <div class="row">
             {% for course in courses %}
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="course-card">
-                    <img src="https://via.placeholder.com/300" alt="Course Image">
-                    <h3>{{ course.title }}</h3>
-                    <p>{{ course.description|truncatewords:20 }}</p>
-                    <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">Learn More</a>
+                    <img src="{{ course.cover.url }}" alt="Course Image" class="img-fluid">
+                    <div class="course-card-container">
+                        <h3>{{ course.title }}</h3>
+                        <p>{{ course.description|truncatewords:20 }}</p>
+                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">Learn More</a>
+                    </div>
                 </div>
             </div>
             {% empty %}
-            <p>No courses found.</p>  <!-- 当courses为空时显示 -->
-            {% endfor %}
+            <div class="col-12">
+                <p>No courses found.</p>
+            </div>
+            {% endfor %}            
         </div>
     </div>
     

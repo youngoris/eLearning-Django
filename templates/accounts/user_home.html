@@ -28,28 +28,36 @@
                 </div>
 
                 {% if user_profile.user_type == 'student' %}
-                    <!-- 状态更新卡片 -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>Status Updates</h5>
-                        </div>
-                        {% if request.user == user_profile %}
-                            <div class="card-body">
-                                <form action="{% url 'status_update_url' %}" method="POST">
-                                    {% csrf_token %}
-                                    <div class="mb-3">
-                                        <textarea class="form-control" name="status" rows="2" placeholder="What's on your mind?"></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Post</button>
-                                </form>
-                            </div>
-                        {% endif %}
-                        <ul class="list-group list-group-flush">
-                            {% for status in status_updates %}
-                            <li class="list-group-item">{{ status.text }} <br> <small>{{ status.created_at }}</small></li>
-                            {% endfor %}
-                        </ul>
+                <!-- 状态更新卡片 -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Status Updates</h5>
                     </div>
+                    {% if request.user == user_profile %}
+                    <div class="card-body">
+                        <form action="{% url 'status_update_url' %}" method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <textarea class="form-control" name="status" rows="2" placeholder="What's on your mind?"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Post</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <ul class="list-group list-group-flush">
+                        {% for status in status_updates %}
+                        <li class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <span class="font-weight-bold" style="font-size: 0.9em;">{{ status.text }}</span>
+                                <div class="ms-auto" style="position: absolute; bottom: 5px; right: 16px;">
+                                    <small class="text-muted" style="font-size: 0.6em;">{{ status.created_at|date:"Y-m-d H:i" }}</small>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
                 
 
                     <!-- 截止日期卡片 -->
@@ -88,7 +96,7 @@
                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <!-- Left Side: Avatar and Username -->
                                 <a href="{% url 'user_home' student.username %}" class="d-flex align-items-center">
-                                    <img src="{{ student.get_avatar_url }}" class="rounded-circle" alt="User Avatar" style="width: 50px; height: 50px; margin-right: 15px;">
+                                    <img src="{{ student.get_avatar_url }}" class="avatar-list" alt="User Avatar" style="width: 50px; height: 50px; margin-right: 15px;">
                                     <span>{{ student.username }}</span>
                                 </a>
                             
@@ -149,21 +157,24 @@
                         <div class="row card-body">
                             {% for course in available_courses %}
                             <div class="col-md-6 mb-4">
-                                <div class="card h-100">
+                                <div class="card h-100 d-flex flex-column"> <!-- 使用Flex布局和垂直方向 -->
                                     {% if course.cover %}
                                     <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
                                     {% endif %}
-                                    <div class="card-body">
+                                    <div class="card-body flex-grow-1"> <!-- 允许内容区域扩展 -->
                                         <h5 class="card-title">{{ course.title }}</h5>
                                         <p class="card-text text-truncate" style="max-height: 3rem;">{{ course.category.name }} | {{ course.teacher.real_name }}</p>
-                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">View Course</a>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top-0"> <!-- 按钮置底，无边框背景透明 -->
+                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100 mt-auto">View Course</a> <!-- 宽度100%，自动边距将按钮推到底部 -->
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                     </div>
-                {% endif %}
+                    {% endif %}
+                    
                 </div>
 
                 {% elif user_profile.user_type == 'teacher' %}

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Course, Enrollment, Comment, Category
 from django.http import JsonResponse
+from apps.accounts.models import CustomUser, Notification
 
 
 def course_list(request):
@@ -47,6 +48,7 @@ def enroll_in_course(request, id):
 
     return redirect('courses:course_detail', id=id)
 
+@login_required
 def add_course(request):
     if request.method == 'POST':
         course_form = CourseForm(request.POST, request.FILES)
@@ -54,6 +56,16 @@ def add_course(request):
             new_course = course_form.save(commit=False)
             new_course.teacher = request.user  # 确保这里将当前用户设置为新课程的教师
             new_course.save()  # 必须先保存Course，才能创建与之关联的Material实例
+
+                        # 向所有学生发送通知
+            students = CustomUser.objects.filter(user_type='student')
+            for student in students:
+                Notification.objects.create(
+                    recipient=student,
+                    title="New Course Available",
+                    message=f"A new course '{new_course.title}' is now available. Check it out!",
+                    url="/courses/" + str(new_course.id) 
+                )
             
             # 初始化MaterialFormSet与新创建的Course实例
             material_formset = MaterialFormSet(request.POST, request.FILES, instance=new_course)
@@ -61,11 +73,11 @@ def add_course(request):
             if material_formset.is_valid():
                 material_formset.save()  # 保存材料
                 return redirect('courses:course_detail', id=new_course.id)  # 重定向到新课程的详情页面
+
     else:
         course_form = CourseForm()
         material_formset = MaterialFormSet()
     return render(request, 'courses/add_course.html', {'form': course_form, 'material_formset': material_formset})
-
 
 
 
@@ -93,12 +105,25 @@ def add_comment_to_course(request, course_id):
         # 假设你有一个 Comment 模型，你需要根据你的具体模型来创建评论
         Comment.objects.create(course=course, user=request.user, text=comment_text)
         messages.success(request, 'Your comment has been added.')
+
+    # 假设留言创建成功
+    Notification.objects.create(
+        recipient=course.teacher,
+        title="New Comment in Your Course",
+        message=f"A new comment has been posted in your course '{course.title}'.",
+        url="/courses/" + str(course.id) + "/#comments", 
+    )
+
     return redirect('courses:course_detail', id=course_id)
 
-def category_courses(request, category_id):
+def courses_by_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     courses = Course.objects.filter(category=category)
-    return render(request, 'courses/category_courses.html', {'category': category, 'courses': courses})
+    context = {
+        'courses': courses,
+        'category_name': category.name,  # 假设Category模型有一个name字段
+    }
+    return render(request, 'courses/category_courses.html', context)
 
 
 @login_required
