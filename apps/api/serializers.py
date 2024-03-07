@@ -6,8 +6,7 @@ from apps.courses.models import Course
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = '__all__'
-        exclude = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions']
+        exclude = ['password', 'last_login', 'first_name', 'last_name', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions']
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
