@@ -240,34 +240,49 @@
 
 <script>
     // JavaScript to handle form show/hide and file upload
-    document.getElementById('showUploadForm').addEventListener('click', function() {
-        document.getElementById('uploadFormContainer').style.display = 'block';
+    document.addEventListener('DOMContentLoaded', function() {
+        var showUploadButton = document.getElementById('showUploadForm');
+        if (showUploadButton) {
+            showUploadButton.addEventListener('click', function() {
+                document.getElementById('uploadFormContainer').style.display = 'block';
+            });
+        }
     });
     
-    document.getElementById('uploadForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        fetch('{% url "courses:upload_teacher_file_url_name" %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Append the new file to the list
-                var newListElement = `<li class="list-group-item"><a href="${data.file_url}" target="_blank">${data.file_name}</a></li>`;
-                document.getElementById('uploadedFilesList').innerHTML += newListElement;
-                // Optionally, hide the upload form again
-                document.getElementById('uploadFormContainer').style.display = 'none';
-            } else {
-                // Handle errors (e.g., display an error message)
-                console.error('File upload failed.');
-            }
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        var uploadForm = document.getElementById('uploadForm');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                fetch('{% url "courses:upload_teacher_file_url_name" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Append the new file to the list
+                        var newListElement = `<li class="list-group-item"><a href="${data.file_url}" target="_blank">${data.file_name}</a></li>`;
+                        document.getElementById('uploadedFilesList').innerHTML += newListElement;
+                        // Optionally, hide the upload form again
+                        document.getElementById('uploadFormContainer').style.display = 'none';
+                    } else {
+                        // Handle errors (e.g., display an error message)
+                        console.error('File upload failed.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle any other errors or display a generic error message
+                });
+            });
+        }
     });
-    </script>
+    
+</script>
 
 {% endblock %}
