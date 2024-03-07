@@ -210,51 +210,55 @@ footer {
 
 
 
-.chat-header {
-    padding: 10px;
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #ddd;
-}
-
-.chat-messages {
-    flex-grow: 1;
-    padding: 10px;
-    overflow-y: auto;
-}
-
-.chat-input {
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    display: flex;
-}
-
-.chat-input input {
-    flex-grow: 1;
-    margin-right: 10px;
-}
-
-.chat-input button {
-    cursor: pointer;
-}
-
+/* 调整聊天图标的样式，确保它显示 */
 #chat-icon {
     position: fixed;
     bottom: 20px;
     right: 20px;
     cursor: pointer;
-    z-index: 1000;
-}
+    z-index: 1500;
+    display: block; /* 新增 */
+  }
 
 #chat-plugin {
-    display: none; /* 开始时不显示聊天插件 */
     position: fixed;
-    bottom: 70px; /* 调整为图标的高度+一些间隙 */
-    right: 20px;
-    width: 300px; /* 或者你需要的宽度 */
+    bottom: 20px; /* 距离底部距离 */
+    right: 20px; /* 距离右侧距离 */
+    width: 300px;
+    max-height: 400px; /* 限高 */
     z-index: 1000;
-    background-color: white;
+    background-color: rgb(240, 239, 239);
     border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
+    border-radius: 8px; /* 圆角 */
+    box-shadow: 0 0 9px rgba(0, 0, 0, 0.1); /* 阴影 */
+}
+  
+/* 限制聊天消息区域的高度，并允许滚动 */
+#chat-messages {
+    flex-grow: 1;
+    padding: 3px;
+    overflow-y: auto;
+    min-height: 100px; 
+    max-height: 300px; /* 限制最大高度，并允许滚动 */
+    border-bottom: 1px solid #e0e1e1; /* 添加横线 */
+}
+
+#chat-message:not(:last-child) {
+    border-bottom: 1px solid #ddd; /* 为最后一条消息之外的每条消息添加横线 */
+}
+
+.chat-input{
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    margin-bottom: 5px;
+
+}
+
+#chat-header {
+    padding: 3px;
+    border-bottom: 1px solid #ddd;
+    background-color: #e7e7e7;
+    font-weight: bold;
+    text-align: center;
+    color: #4f4f50;
 }

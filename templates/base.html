@@ -104,17 +104,18 @@
     </div>
 
     <!-- 聊天图标 -->
+    {% if user.is_authenticated %}
     <div id="chat-icon" >
         <img src="{% static 'admin/img/chat-icon.svg' %}" alt="Chat Icon">
     </div>
 
     <!-- 聊天插件的容器，默认是隐藏的 -->
-    <div id="chat-plugin" class="container mt-5" >
-        <div class="chat-header">
+    <div id="chat-plugin" >
+        <div id="chat-header">
             <h4>Chat in {{ room_name|default:"Public Room" }}</h4>
         </div>
 
-        <div id="chat-messages" class="chat-messages">
+        <div id="chat-messages">
             <!-- 聊天消息将动态添加到这里 -->
         </div>
         <div class="chat-input">
@@ -122,6 +123,7 @@
             <button id="chat-message-send">Send</button>
         </div>
     </div>
+    {% endif %}
 
     
 
@@ -213,24 +215,20 @@
         // 初始连接WebSocket
         connectWebSocket(currentRoomName);
     
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const chatIcon = document.getElementById('chat-icon');
-            const chatPlugin = document.getElementById('chat-plugin');
+        document.addEventListener('DOMContentLoaded', function() {
+            var chatIcon = document.getElementById('chat-icon');
+            var chatPlugin = document.getElementById('chat-plugin');
         
-            chatIcon.addEventListener('click', () => {
-                // 切换聊天窗口的显示状态
-                if (chatPlugin.style.display === 'none') {
-                    chatPlugin.style.display = 'block';
-                    // 如果是第一次显示聊天窗口，则建立WebSocket连接
-                    if (!window.chatSocket) {
-                        connectWebSocket(currentRoomName);
-                    }
-                } else {
+            chatIcon.addEventListener('click', function() {
+                // 切换聊天窗口的显示和隐藏
+                if (chatPlugin.style.display === 'block') {
                     chatPlugin.style.display = 'none';
+                } else {
+                    chatPlugin.style.display = 'block';
                 }
             });
         });
+        
         
     
     </script>
