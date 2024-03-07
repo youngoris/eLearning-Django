@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, StatusUpdate
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
@@ -51,3 +51,8 @@ class ChangePasswordSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+class StatusUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StatusUpdate
+        fields = ['text']
+        read_only_fields = ['user', 'created_at']

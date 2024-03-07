@@ -8,31 +8,33 @@ from .models import Course, Enrollment, Comment, Category
 from apps.accounts.models import CustomUser, Notification
 from .serializers import CourseSerializer
 
-
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-class UserEnrolledCoursesAPIView(APIView):
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        enrollments = Enrollment.objects.filter(student=user)
-        courses = Course.objects.filter(enrollments__in=enrollments)
-        serializer = CourseSerializer(courses, many=True)
-        return Response(serializer.data)
+class CourseListView(generics.ListAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
 
-class UserEnrolledCoursesAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+class CourseDetailView(generics.RetrieveAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
 
-    def get(self, request):
-        user = request.user
-        enrollments = Enrollment.objects.filter(student=user)
-        courses = Course.objects.filter(enrollments__in=enrollments)
-        serializer = CourseSerializer(courses, many=True)
-        return Response(serializer.data)
+class CourseCreateView(generics.CreateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+class CourseUpdateView(generics.UpdateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+class CourseDeleteView(generics.DestroyAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
 
 
 @login_required

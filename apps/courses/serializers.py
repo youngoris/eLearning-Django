@@ -15,7 +15,7 @@ class CourseSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     language = LanguageSerializer(read_only=True)
     teacher = serializers.SlugRelatedField(slug_field='username', read_only=True)
-    average_rating = serializers.SerializerMethodField()
+    # average_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
@@ -25,3 +25,4 @@ class CourseSerializer(serializers.ModelSerializer):
     
     def get_average_rating(self, obj):
         return obj.average_rating()
+

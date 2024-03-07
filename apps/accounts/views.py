@@ -8,13 +8,14 @@ from django.utils import timezone
 from .forms import CustomUserCreationForm, CustomUserEditForm
 from .models import CustomUser, StatusUpdate, Notification
 from apps.courses.models import Course, Enrollment
-from .serializers import CustomUserSerializer,  UserRegistrationSerializer, UserProfileSerializer, ChangePasswordSerializer
+from .serializers import CustomUserSerializer,  UserRegistrationSerializer, UserProfileSerializer, ChangePasswordSerializer, StatusUpdateSerializer
+from apps.courses.serializers import CourseSerializer
 
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.generics import CreateAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 
@@ -77,6 +78,63 @@ class ChangePasswordView(APIView):
             serializer.update(user, serializer.validated_data)
             return Response({"message": "Password updated successfully"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class MarkNotificationAsReadAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, notification_id):
+        notification = get_object_or_404(Notification, id=notification_id, recipient=request.user)
+        notification.read = True
+        notification.save()
+        return Response({"message": "Notification marked as read."}, status=status.HTTP_200_OK)
+
+
+
+class BlockStudentAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, student_id):
+        if request.user.user_type != 'teacher':
+            return Response({'message': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+        
+        student = get_object_or_404(CustomUser, id=student_id)
+        courses = Course.objects.filter(teacher=request.user)
+        
+        for course in courses:
+            Enrollment.objects.filter(student=student, course=course).delete()
+
+        return Response({'message': f'{student.username} has been blocked and unenrolled from all your courses.'}, status=status.HTTP_200_OK)
+    
+class StatusUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = StatusUpdateSerializer(data=request.data)
+        if serializer.is_valid():
+            # Set the user automatically to the current user
+            status_update = serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class IsOwnerOrAdmin(BasePermission):
+    """
+    Custom permission to only allow owners of an object or admins to delete it.
+    """
+    def has_object_permission(self, request, view, obj):
+        # Admin users can delete any objects
+        if request.user.is_staff:
+            return True
+        # Only owners are allowed to delete their objects
+        return obj.user == request.user
+
+class StatusUpdateDeleteAPIView(DestroyAPIView):
+    queryset = StatusUpdate.objects.all()
+    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
+    lookup_field = 'id'
+
+    def perform_destroy(self, instance):
+        instance.delete()
 
 
 class UserEnrolledCoursesAPIView(APIView):
@@ -84,10 +142,16 @@ class UserEnrolledCoursesAPIView(APIView):
 
     def get(self, request):
         user = request.user
-        enrollments = Enrollment.objects.filter(student=user)
-        courses = Course.objects.filter(enrollments__in=enrollments)
+        enrollments = Enrollment.objects.filter(student_id=request.user.id)
+        course_ids = enrollments.values_list('course', flat=True)
+        courses = Course.objects.filter(id__in=course_ids)
+        
+        if not courses:
+            return Response({'message': 'You are not enrolled in any courses.'}, status=404)
+
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
+    
 
 
 def register(request):

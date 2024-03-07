@@ -1,10 +1,14 @@
 
 from django.urls import path
-from apps.courses import views 
+from apps.courses.views import  CourseListView, CourseDetailView, CourseCreateView, CourseUpdateView, CourseDeleteView
 
 app_name = 'courses-api'
+
 urlpatterns = [
-
-    path('user-courses/', views.UserEnrolledCoursesAPIView.as_view(), name='user-enrolled-courses'),
-
+    path('courses/', CourseListView.as_view(), name='course-list'),
+    path('courses/<int:pk>/', CourseDetailView.as_view(), name='course-detail'),
+    path('courses/new/', CourseCreateView.as_view(), name='course-create'),
+    path('courses/update/<int:pk>/', CourseUpdateView.as_view(), name='course-update'),
+    path('courses/delete/<int:pk>/', CourseDeleteView.as_view(), name='course-delete'),
 ]
+
