@@ -4,6 +4,8 @@ from django.contrib.auth.views import LoginView
 
 
 
+
+
 urlpatterns = [
     path('register/', register, name='register'),
     path('login/', LoginView.as_view(template_name='accounts/login.html'), name='login'),
@@ -15,5 +17,6 @@ urlpatterns = [
     path('status_update/', status_update, name='status_update_url'),
     path('block_student/<int:student_id>/', block_student, name='block_student'),
     path('notifications/read/<int:notification_id>/', mark_notification_as_read, name='mark_notification_as_read'),
-
 ] 
+
+

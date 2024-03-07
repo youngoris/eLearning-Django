@@ -23,13 +23,16 @@ from django.conf.urls.static import static
 from apps.accounts import views
 
 urlpatterns = [
-    path('', include('apps.main.urls')),  # 通常用于首页和其他通用页面
-    path('admin/', admin.site.urls),  # 用于自定义管理后台
+    path('', include('apps.main.urls')),  
+    path('admin/', admin.site.urls),
     path('user/<str:username>/', views.user_home, name='user_home'),
-    path('api/', include('apps.api.urls')),
     path('accounts/', include('apps.accounts.urls')),
     path('courses/', include('apps.courses.urls', namespace='courses')),
     path('students/', include('apps.students.urls')),
     path('teachers/', include('apps.teachers.urls')),
+
+    path('api/', include('apps.api.urls')),
+    path('api/accounts/', include('apps.accounts.urls_api', namespace='accounts-api')),  # API routes
+    path('api/courses/', include('apps.courses.urls_api', namespace='courses-api')),  # API routes
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

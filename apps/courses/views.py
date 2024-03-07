@@ -1,10 +1,38 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import CourseForm, MaterialFormSet, TeacherFileForm
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from .models import Course, Enrollment, Comment, Category
 from django.http import JsonResponse
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+from .forms import CourseForm, MaterialFormSet, TeacherFileForm
+from .models import Course, Enrollment, Comment, Category
 from apps.accounts.models import CustomUser, Notification
+from .serializers import CourseSerializer
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+class UserEnrolledCoursesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        enrollments = Enrollment.objects.filter(student=user)
+        courses = Course.objects.filter(enrollments__in=enrollments)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+
+
+class UserEnrolledCoursesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        enrollments = Enrollment.objects.filter(student=user)
+        courses = Course.objects.filter(enrollments__in=enrollments)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
 
 
 @login_required

@@ -1,14 +1,94 @@
-from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm, CustomUserEditForm
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout, update_session_auth_hash, get_user_model
-from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.utils import timezone
+
+from .forms import CustomUserCreationForm, CustomUserEditForm
 from .models import CustomUser, StatusUpdate, Notification
 from apps.courses.models import Course, Enrollment
-from django.utils import timezone
-from django.http import HttpResponseRedirect
+from .serializers import CustomUserSerializer,  UserRegistrationSerializer, UserProfileSerializer, ChangePasswordSerializer
+
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import AllowAny
+from rest_framework.authtoken.models import Token
+
+
+
+class CustomUserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = CustomUserSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request, format=None):
+        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)  # partial=True 允许部分更新
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class UserRegisterAPIView(CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [AllowAny]  # 允许任何用户注册
+
+
+class LoginAPIView(APIView):
+    permission_classes = []  # 允许任何人访问，即使是未认证的用户
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({"token": token.key})
+        return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = UserProfileSerializer(request.user)
+        return Response(serializer.data)
+
+    def put(self, request, format=None):
+        serializer = UserProfileSerializer(request.user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            user = request.user
+            serializer.update(user, serializer.validated_data)
+            return Response({"message": "Password updated successfully"})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserEnrolledCoursesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        enrollments = Enrollment.objects.filter(student=user)
+        courses = Course.objects.filter(enrollments__in=enrollments)
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
+
 
 def register(request):
     if request.method == 'POST':
@@ -24,19 +104,6 @@ def register(request):
 def welcome(request):
     # 处理视图逻辑
     return render(request, 'accounts/welcome.html')
-
-@login_required
-def profile(request):
-    edit_mode = request.GET.get('edit', '0') == '1'
-    if request.method == 'POST':
-        form = CustomUserEditForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            # 重定向到不含查询参数的profile页面，以退出编辑模式
-            return redirect('profile')
-    else:
-        form = CustomUserEditForm(instance=request.user)
-    return render(request, 'accounts/profile.html', {'form': form, 'edit_mode': edit_mode})
 
 def login_view(request):
     if request.method == 'POST':
@@ -60,6 +127,20 @@ def login_view(request):
 
     # 如果是GET请求或者登录失败，渲染登录表单
     return render(request, 'login.html')
+
+@login_required
+def profile(request):
+    edit_mode = request.GET.get('edit', '0') == '1'
+    if request.method == 'POST':
+        form = CustomUserEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            # 重定向到不含查询参数的profile页面，以退出编辑模式
+            return redirect('profile')
+    else:
+        form = CustomUserEditForm(instance=request.user)
+    return render(request, 'accounts/profile.html', {'form': form, 'edit_mode': edit_mode})
+
 
 def change_password(request):
     if request.method == 'POST':
