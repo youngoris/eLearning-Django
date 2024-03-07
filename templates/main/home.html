@@ -1,39 +1,9 @@
 {% extends "base.html" %}
 
 {% block extra_css %}
-<!-- 这里可以添加一些额外的CSS样式，如果需要的话 -->
-{% comment %} <style>
-    .banner {
-        text-align: center;
-        margin-bottom: 30px;
-    }
 
-    .feature {
-        margin-top: 40px;
-    }
-
-    .course-card {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        transition: 0.3s;
-        border-radius: 5px; /* 边框圆角 */
-    }
-
-    .course-card img {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        width: 100%;
-        height: auto;
-    }
-
-    .course-card-container {
-        padding: 16px;
-    }
-
-    .course-card:hover {
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    }
-</style> {% endcomment %}
 {% endblock %}
+
 
 {% block content %}
 <div class="container mt-5">
@@ -45,25 +15,42 @@
 
     <div class="feature">
         <h2>Featured Courses</h2>
-        <div class="row">
-            {% for course in courses %}
-            <div class="col-md-4 mb-4">
-                <div class="course-card">
-                    <img src="{{ course.cover.url }}" alt="Course Image" class="img-fluid">
-                    <div class="course-card-container">
-                        <h3>{{ course.title }}</h3>
-                        <p>{{ course.description|truncatewords:20 }}</p>
-                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary">Learn More</a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <p>No courses found.</p>
-            </div>
-            {% endfor %}            
-        </div>
     </div>
+    <div id="featured-courses-container"></div>        
     
 </div>
-{% endblock %}
+{% endblock content %}
+
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('http://127.0.0.1:8000/api/courses/')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('featured-courses-container');
+            let coursesHtml = '<div class="row">'; 
+            data.forEach((course, index) => {
+                const courseElement = `
+                    <div class="col-md-4 mb-4"> 
+                        <div class="course-card">
+                            <img src="${course.cover}" alt="Course Image" class="img-fluid">
+                            <div class="course-card-body">
+                                <h5 class="course-title">${course.title}</h5>
+                                <p class="course-description">${course.description}</p>
+                                <a href="/courses/${course.id}" class="btn btn-primary">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                coursesHtml += courseElement; 
+            });
+            coursesHtml += '</div>';
+            container.innerHTML = coursesHtml; 
+        })
+        .catch(error => console.error('Error:', error));
+    });
+    
+</script>
+{% endblock extra_js %} 
+                    

@@ -167,6 +167,11 @@ def edit_course(request, id):
         material_formset = MaterialFormSet(instance=course)
     return render(request, 'courses/edit_course.html', {'form': form, 'material_formset': material_formset, 'course': course})
 
+def featured_courses(request):
+    featured_courses=[]
+    featured_courses = Course.objects.all()[:5]  # 获取最新的5门课程
+    context = {'courses': featured_courses}
+    return render(request, 'main/home.html', context)
 
 @login_required
 def add_comment_to_course(request, id):
