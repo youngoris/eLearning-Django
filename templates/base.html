@@ -103,33 +103,26 @@
         </main>
     </div>
 
-    <div class="container mt-5">
-        <div id="chat-plugin" class="chat-container">
-            <div class="chat-header">
-                <h4>Chat in {{ room_name|default:"Public Room" }}</h4>
-            </div>
-    
-            <div class="chat-room-selector">
-                <label for="room-selector">Choose a chat room:</label>
-                <select id="room-selector">
-                    <option value="Public Room">Public Room</option>
-                    {% for room in rooms %}
-                    <option value="{{ room.title }}">{{ room.title }}</option>
-                    {% endfor %}
-                </select>
-                <button id="create-room-button">Create New Room</button>
-            </div>
-            
-            <div id="chat-messages" class="chat-messages">
-                <!-- 聊天消息将动态添加到这里 -->
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chat-message-input" placeholder="Type a message..." autofocus>
-                <button id="chat-message-send">Send</button>
-            </div>
+    <!-- 聊天图标 -->
+    <div id="chat-icon" >
+        <img src="{% static 'admin/img/chat-icon.svg' %}" alt="Chat Icon">
+    </div>
+
+    <!-- 聊天插件的容器，默认是隐藏的 -->
+    <div id="chat-plugin" class="container mt-5" >
+        <div class="chat-header">
+            <h4>Chat in {{ room_name|default:"Public Room" }}</h4>
+        </div>
+
+        <div id="chat-messages" class="chat-messages">
+            <!-- 聊天消息将动态添加到这里 -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-message-input" placeholder="Type a message...">
+            <button id="chat-message-send">Send</button>
         </div>
     </div>
-    
+
     
 
     
@@ -220,12 +213,25 @@
         // 初始连接WebSocket
         connectWebSocket(currentRoomName);
     
-        // 聊天室选择逻辑
-        document.querySelector('#room-selector').addEventListener('change', function(e) {
-            currentRoomName = this.value; // 更新当前聊天室
-            document.querySelector('#chat-messages').innerHTML = ''; // 清空聊天记录
-            connectWebSocket(currentRoomName); // 重新连接WebSocket
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const chatIcon = document.getElementById('chat-icon');
+            const chatPlugin = document.getElementById('chat-plugin');
+        
+            chatIcon.addEventListener('click', () => {
+                // 切换聊天窗口的显示状态
+                if (chatPlugin.style.display === 'none') {
+                    chatPlugin.style.display = 'block';
+                    // 如果是第一次显示聊天窗口，则建立WebSocket连接
+                    if (!window.chatSocket) {
+                        connectWebSocket(currentRoomName);
+                    }
+                } else {
+                    chatPlugin.style.display = 'none';
+                }
+            });
         });
+        
     
     </script>
     

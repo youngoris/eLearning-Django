@@ -16,5 +16,4 @@ urlpatterns = [
     path('block_student/<int:student_id>/', block_student, name='block_student'),
     path('notifications/read/<int:notification_id>/', mark_notification_as_read, name='mark_notification_as_read'),
 
-
-]
+] 

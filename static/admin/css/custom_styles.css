@@ -205,17 +205,7 @@ footer {
 }
 
 
-.chat-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 300px;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
-}
+
 
 .chat-header {
     padding: 10px;
@@ -242,4 +232,26 @@ footer {
 
 .chat-input button {
     cursor: pointer;
+}
+
+#chat-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#chat-plugin {
+    display: none; /* 开始时不显示聊天插件 */
+    position: fixed;
+    bottom: 70px; /* 调整为图标的高度+一些间隙 */
+    right: 20px;
+    width: 300px; /* 或者你需要的宽度 */
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
 }

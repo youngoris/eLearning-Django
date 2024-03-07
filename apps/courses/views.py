@@ -7,10 +7,6 @@ from django.http import JsonResponse
 from apps.accounts.models import CustomUser, Notification
 
 
-def course_list(request):
-    courses = Course.objects.all()
-    return render(request, 'courses/course_list.html', {'courses': courses})
-
 @login_required
 def course_detail(request, id):
     course = get_object_or_404(Course, id=id)
@@ -46,6 +42,13 @@ def enroll_in_course(request, id):
         Enrollment.objects.create(student=student, course=course)
         messages.success(request, "You have been enrolled in the course successfully.")
 
+        Notification.objects.create(
+        recipient=course.teacher,
+        title="New Student Enrolled",
+        message=f"A new student enrolled in your course '{course.title}'.",
+        url=f"/{course.id}", 
+    )
+
     return redirect('courses:course_detail', id=id)
 
 @login_required
@@ -64,7 +67,7 @@ def add_course(request):
                     recipient=student,
                     title="New Course Available",
                     message=f"A new course '{new_course.title}' is now available. Check it out!",
-                    url="/courses/" + str(new_course.id) 
+                    url= str(new_course.id),
                 )
             
             # 初始化MaterialFormSet与新创建的Course实例
@@ -98,23 +101,22 @@ def edit_course(request, id):
 
 
 @login_required
-def add_comment_to_course(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
+def add_comment_to_course(request, id):
+    course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
         comment_text = request.POST.get('comment')
         # 假设你有一个 Comment 模型，你需要根据你的具体模型来创建评论
         Comment.objects.create(course=course, user=request.user, text=comment_text)
         messages.success(request, 'Your comment has been added.')
 
-    # 假设留言创建成功
     Notification.objects.create(
         recipient=course.teacher,
         title="New Comment in Your Course",
         message=f"A new comment has been posted in your course '{course.title}'.",
-        url="/courses/" + str(course.id) + "/#comments", 
+        url=f"/{course.id}" + "/#comments", 
     )
 
-    return redirect('courses:course_detail', id=course_id)
+    return redirect('courses:course_detail', id=id)
 
 def courses_by_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)

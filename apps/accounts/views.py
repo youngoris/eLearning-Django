@@ -147,7 +147,7 @@ def mark_notification_as_read(request, notification_id):
     notification.read = True
     notification.save()
     # 重定向到通知关联的URL或某个默认页面
-    return redirect(notification.url)
+    return redirect("/courses" + notification.url)
 
 @login_required
 def block_student(request, student_id):
