@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Course, Category, Language
+from apps.accounts.models import CustomUser
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,3 +27,17 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_average_rating(self, obj):
         return obj.average_rating()
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = '__all__'
+
+class LanguageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Language
+        fields = '__all__'
+
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'real_name', 'email'] 

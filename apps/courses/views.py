@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import CourseForm, MaterialFormSet, TeacherFileForm
 from .models import Course, Enrollment, Comment, Category
 from apps.accounts.models import CustomUser, Notification
-from .serializers import CourseSerializer
+from .serializers import CourseSerializer, CategorySerializer, LanguageSerializer, TeacherSerializer
 
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -35,6 +35,44 @@ class CourseDeleteView(generics.DestroyAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
+
+class CategoryListView(APIView):
+    def get(self, request, format=None):
+        categories = Category.objects.all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    
+class LanguageListView(APIView):
+    def get(self, request):
+        languages = Language.objects.all()
+        serializer = LanguageSerializer(languages, many=True)
+        return Response(serializer.data)
+    
+class TeacherListView(APIView):
+    def get(self, request):
+        teachers = CustomUser.objects.filter(is_teacher=True)  # 假设有is_teacher字段
+        serializer = TeacherSerializer(teachers, many=True)
+        return Response(serializer.data)
+
+class CourseFilterView(APIView):
+    def get(self, request):
+        category_id = request.query_params.get('category', None)
+        language_id = request.query_params.get('language', None)
+        teacher_id = request.query_params.get('teacher', None)
+
+        courses = Course.objects.all()
+
+        if category_id is not None:
+            courses = courses.filter(category_id=category_id)
+        
+        if language_id is not None:
+            courses = courses.filter(language_id=language_id)
+
+        if teacher_id is not None:
+            courses = courses.filter(teacher_id=teacher_id)
+
+        serializer = CourseSerializer(courses, many=True)
+        return Response(serializer.data)
 
 
 @login_required
