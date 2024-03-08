@@ -2,6 +2,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from asgiref.sync import sync_to_async
 from datetime import datetime
+from .models import Message
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -30,6 +32,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # current timestamp
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+
         # send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -45,3 +48,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
     # receive message from room group
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
+    
