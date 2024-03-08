@@ -224,7 +224,7 @@ footer {
 #chat-plugin {
     display: none; /* 默认不显示 */
     position: fixed;
-    bottom: 70px;
+    bottom: 75px;
     right: 20px;
     width: 300px; /* 根据需要调整宽度 */
     max-height: 400px; /* 可以根据需要调整高度 */
@@ -238,7 +238,6 @@ footer {
 #chat-header {
     background-color: #f7f7f7;
     border-bottom: 1px solid #ddd;
-    padding: 10px;
     text-align: center;
 }
 
@@ -253,6 +252,7 @@ footer {
 /* 消息的样式 */
 .chat-message {
     display: flex;
+    word-wrap: break-word; 
     background-color: #fff; /* 白色背景 */
     padding: 5px 10px;
     margin-bottom: 8px;

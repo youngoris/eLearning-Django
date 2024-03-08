@@ -111,7 +111,6 @@
         <div id="chat-icon" data-username="{{ user.real_name }}" data-avatar="{{ user.get_avatar_url }}">
             <img src="{% static 'admin/img/chat-icon.png' %}" alt="Chat Icon">
         </div>
-
      
         <div id="chat-plugin">
                             <!-- chat head -->
@@ -188,15 +187,27 @@
         document.addEventListener('DOMContentLoaded', function() {
             var chatIcon = document.getElementById('chat-icon');
             var chatPlugin = document.getElementById('chat-plugin');
+            var sendMessageButton = document.getElementById('sendMessageButton');
+            var messageInput = document.getElementById('chat-message-input');
             
             chatIcon.addEventListener('click', function() {
-                // 切换聊天窗口的显示和隐藏
+                // show or hide the chat plugin
                 if (chatPlugin.style.display === 'block') {
                     chatPlugin.style.display = 'none';
                 } else {
                     chatPlugin.style.display = 'block';
                 }
             });
+
+            // "Send Message" click event
+            if (sendMessageButton) {
+                sendMessageButton.addEventListener('click', function() {
+                    // display the chat plugin
+                    chatPlugin.style.display = 'block';
+                    // focus the message input
+                    messageInput.focus();
+                });
+            }
         });
 
 
@@ -215,7 +226,11 @@
                         </div>
                     </div>
                 `;
+                // 保证新消息能够滚动到视图中
+                var chatMessages = document.querySelector('#chat-messages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             };
+
     
             chatSocket.onclose = function(e) {
                 console.error('Chat socket closed unexpectedly');
