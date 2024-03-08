@@ -25,7 +25,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         username = self.scope["user"].real_name if self.scope["user"].real_name else self.scope["user"].username
-        avatar = self.scope["user"].avatar.url if self.scope["user"].avatar else ""
+        avatar = self.scope["user"].avatar.url if self.scope["user"].avatar else "static('admin/img/avatar.svg')"
 
         # current timestamp
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

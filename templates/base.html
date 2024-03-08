@@ -51,7 +51,7 @@
                     
                     <ul class="navbar-nav">
                         {% if user.is_authenticated %}
-                        <!-- 通知下拉菜单项 -->
+                        <!-- drop down menu -->
                         <li class="nav-item dropdown my-1 me-3">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarNotificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if notifications|length > 0 %}
@@ -216,6 +216,8 @@
             
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
+                const timestamp = new Date(data.timestamp).toLocaleString();
+
                 document.querySelector('#chat-messages').innerHTML += `
                     <div class="chat-message">
                         <img src="${data.avatar}" alt="Avatar" class="chat-avatar">
@@ -226,7 +228,7 @@
                         </div>
                     </div>
                 `;
-                // 保证新消息能够滚动到视图中
+                // make the chat scroll to the bottom
                 var chatMessages = document.querySelector('#chat-messages');
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             };
