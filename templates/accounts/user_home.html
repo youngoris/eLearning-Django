@@ -2,13 +2,13 @@
 
 {% block content %}
 <div class="container mt-5">
-    <!-- 用户角色判断 -->
+    <!-- user role judgment -->
     <div class="container mt-5">
         <div class="row">
-            <!-- 左侧列：状态和截止日期 -->
+            <!-- Left column: Status and Due Date -->
             <div class="col-lg-4 mb-4">
 
-                <!-- 用户信息展示区 -->
+                <!-- User information display area -->
                 <div class="card user-info mb-4 text-center">
                     <div class="card-body">
                         <img src="{{ user_profile.get_avatar_url }}" class="rounded-circle" alt="User Avatar" style="width: 100px; height: 100px;">
@@ -17,18 +17,15 @@
                         <p>{{ user_profile.email }}</p>
 
                         {% if request.user != user_profile %}
-                            <!-- 发送信息按钮（需要实现发送信息的逻辑） -->
                             <button class="btn btn-primary" id="sendMessageButton">Send Message</button>
-
                         {%else%}
-                            <!-- 发送信息按钮（需要实现发送信息的逻辑） -->
                             <a href="{% url 'profile' %}" class="btn btn-primary float-right">Edit</a>                        {% endif %}
                     </div>
 
                 </div>
 
                 {% if user_profile.user_type == 'student' %}
-                <!-- 状态更新卡片 -->
+                <!-- Status update card -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <h5>Status Updates</h5>
@@ -60,7 +57,7 @@
 
                 
 
-                    <!-- 截止日期卡片 -->
+                    <!-- Deadline card -->
                     <div class="card mb-3">
                         <div class="card-header">
                             <h5>Upcoming Deadlines</h5>
@@ -119,9 +116,9 @@
 
 
             {% if user_profile.user_type == 'student' %}
-                <!-- 右侧列：我的课程和可用课程 -->
+                <!-- Right column: My courses and available courses -->
                 <div class="col-lg-8 ">
-                    <!-- 我的课程卡片 -->
+                    <!-- My Course Cards -->
                     <div class="card mb-4">
                         <div class="card-header">
                             {% if request.user == user_profile %}
@@ -149,7 +146,7 @@
                     
                     
                     {% if request.user == user_profile %}
-                    <!-- 可用课程卡片 -->
+                    <!-- Available lesson cards -->
                     <div class="card">
                         <div class="card-header">
                             <h5>Available Courses</h5>
@@ -157,16 +154,16 @@
                         <div class="row card-body">
                             {% for course in available_courses %}
                             <div class="col-md-6 mb-4">
-                                <div class="card h-100 d-flex flex-column"> <!-- 使用Flex布局和垂直方向 -->
+                                <div class="card h-100 d-flex flex-column"> <!-- Use Flex layout and vertical orientation -->
                                     {% if course.cover %}
                                     <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
                                     {% endif %}
-                                    <div class="card-body flex-grow-1"> <!-- 允许内容区域扩展 -->
+                                    <div class="card-body flex-grow-1"> <!-- Allow content area expansion -->
                                         <h5 class="card-title">{{ course.title }}</h5>
                                         <p class="card-text text-truncate" style="max-height: 3rem;">{{ course.category.name }} | {{ course.teacher.real_name }}</p>
                                     </div>
-                                    <div class="card-footer bg-transparent border-top-0"> <!-- 按钮置底，无边框背景透明 -->
-                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100 mt-auto">View Course</a> <!-- 宽度100%，自动边距将按钮推到底部 -->
+                                    <div class="card-footer bg-transparent border-top-0"> <!-- The button is at the bottom, and the borderless background is transparent -->
+                                        <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100 mt-auto">View Course</a> 
                                     </div>
                                 </div>
                             </div>

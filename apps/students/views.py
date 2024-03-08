@@ -5,14 +5,17 @@ from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
+
 def register_student(request):
     pass
 
+# View for the student list, displaying all students
 @login_required
 def student_detail(request, id):
     student = get_object_or_404(Student, pk=id)
     return render(request, 'students/student_detail.html', {'student': student})
 
+# View for the student's enrolled courses, displaying all courses for a student
 @login_required
 def student_courses(request, id):
     student = get_object_or_404(Student, pk=id)

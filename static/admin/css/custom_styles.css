@@ -14,6 +14,7 @@
 }
 
 
+/* Custom styles for the login page */
 .form-text {
     display: block;  
     font-size: 0.8em;  
@@ -177,24 +178,8 @@ footer {
 }
 
 
-.card-body {
-    overflow: hidden;
-}
 
-.card-text {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3; 
-    overflow: hidden;
-}
-
- 
-.card-footer {
-    margin-top: auto;  
-}
-
-
-
+/* chat plugin */
 #chat-container {
     position: fixed;
     bottom: 0;
@@ -209,7 +194,15 @@ footer {
     
     bottom: 20px; 
     right: 20px;
-    z-index: 1001; /
+    z-index: 1001;
+    
+    transition: all 0.3s ease-in-out;
+}
+
+
+#chat-icon:hover img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.2));
 }
 
 #chat-icon img {
@@ -217,12 +210,6 @@ footer {
     height: 50px;
 }
 
-#chat-icon :hover {
-
-    /* add shadow */
-    position: fixed;
-    
-}
 
 #chat-plugin {
     display: none;  
@@ -302,6 +289,22 @@ footer {
 }
 
 
+
+/* course cards */
+.card-body {
+    overflow: hidden;
+}
+
+.card-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; 
+    overflow: hidden;
+}
+
+.card-footer {
+    margin-top: auto;  
+}
 
 .course-card {
     display: flex;

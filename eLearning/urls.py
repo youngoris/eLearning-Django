@@ -22,7 +22,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from apps.accounts import views
 
+
 urlpatterns = [
+    # Traditional routes for the this project
     path('', include('apps.main.urls')),  
     path('admin/', admin.site.urls),
     path('user/<str:username>/', views.user_home, name='user_home'),
@@ -31,8 +33,9 @@ urlpatterns = [
     path('students/', include('apps.students.urls')),
     path('teachers/', include('apps.teachers.urls')),
 
+    # API routes for the this project
     path('api/', include('apps.api.urls')),
     path('api/accounts/', include('apps.accounts.urls_api', namespace='accounts-api')),  # API routes
     path('api/courses/', include('apps.courses.urls_api', namespace='courses-api')),  # API routes
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # This is for serving media files in development

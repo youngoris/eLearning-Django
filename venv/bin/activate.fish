@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/Users/heyonggang/Library/Mobile Documents/com~apple~CloudDocs/UoL/Exam/Final Exam/AWD/未命名/venv"
+set -gx VIRTUAL_ENV "/Users/heyonggang/Library/Mobile Documents/com~apple~CloudDocs/UoL/Exam/Final Exam/AWD/eLearning-Django/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

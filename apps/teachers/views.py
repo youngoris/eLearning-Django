@@ -6,9 +6,11 @@ from apps.courses.models import Course
 def is_teacher(user):
     return user.is_authenticated and user.user_type == 'teacher'
 
+# View for the teacher's course list, displaying all courses for a teacher
 @login_required
 @user_passes_test(is_teacher)
 def add_course(request):
+    # If the form has been submitted...
     if request.method == 'POST':
         form = CourseForm(request.POST, request.FILES)
         if form.is_valid():
@@ -21,7 +23,7 @@ def add_course(request):
         form = CourseForm()
     return render(request, 'teachers/add_course.html', {'form': form})
 
-
+# View for the teacher's course list, displaying all courses for a teacher
 def teacher_detail(request, id):
 
     return render(request, 'teachers/teacher_detail.html', {})

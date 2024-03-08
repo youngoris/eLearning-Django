@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import  CustomUserDetailView, UserRegisterAPIView, LoginAPIView, UserProfileView, ChangePasswordView, BlockStudentAPIView, StatusUpdateAPIView, MarkNotificationAsReadAPIView, StatusUpdateDeleteAPIView, UserEnrolledCoursesAPIView
 
+# api urls for the accounts app
 
 app_name = 'accounts-api'
 

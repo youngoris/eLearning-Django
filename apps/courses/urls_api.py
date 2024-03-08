@@ -2,6 +2,8 @@
 from django.urls import path
 from apps.courses.views import  CourseListView, CourseDetailView, CourseCreateView, CourseUpdateView, CourseDeleteView, CategoryListView, LanguageListView, CourseFilterView, TeacherListView
 
+# URL patterns for the courses API
+
 app_name = 'courses-api'
 
 urlpatterns = [

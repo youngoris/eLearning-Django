@@ -2,9 +2,7 @@ from django.urls import path
 from .views import register, welcome, profile, change_password, edit_profile, logout_view, status_update, block_student,mark_notification_as_read
 from django.contrib.auth.views import LoginView
 
-
-
-
+# URL configurations for the 'accounts' app, defining paths for user management and actions
 
 urlpatterns = [
     path('register/', register, name='register'),

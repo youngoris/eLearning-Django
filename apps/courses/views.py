@@ -1,23 +1,21 @@
+# Import necessary Django and REST framework components
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 from .forms import CourseForm, MaterialFormSet, TeacherFileForm
 from .models import Course, Enrollment, Comment, Category
 from apps.accounts.models import CustomUser, Notification
 from .serializers import CourseSerializer, CategorySerializer, LanguageSerializer, TeacherSerializer
-
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-
+# Class-based views for CRUD operations on courses using generic views for simplicity and reduced code
 class CourseListView(generics.ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-
 
 class CourseDetailView(generics.RetrieveAPIView):
     queryset = Course.objects.all()
@@ -35,47 +33,46 @@ class CourseDeleteView(generics.DestroyAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
 
-
+# APIViews for listing categories, languages, and teachers; allows for fetching data in JSON format
 class CategoryListView(APIView):
+    # Return a list of all categories
     def get(self, request, format=None):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
     
 class LanguageListView(APIView):
+    # Return a list of all languages
     def get(self, request):
         languages = Language.objects.all()
         serializer = LanguageSerializer(languages, many=True)
         return Response(serializer.data)
     
 class TeacherListView(APIView):
+    # Return a list of all teachers
     def get(self, request):
-        teachers = CustomUser.objects.filter(is_teacher=True)  # 假设有is_teacher字段
+        teachers = CustomUser.objects.filter(is_teacher=True)  # Assumes is_teacher field exists
         serializer = TeacherSerializer(teachers, many=True)
         return Response(serializer.data)
 
+# Custom view for filtering courses based on category, language, or teacher
 class CourseFilterView(APIView):
     def get(self, request):
-        category_id = request.query_params.get('category', None)
-        language_id = request.query_params.get('language', None)
-        teacher_id = request.query_params.get('teacher', None)
-
+        # Filter courses dynamically based on query parameters
         courses = Course.objects.all()
-
-        if category_id is not None:
-            courses = courses.filter(category_id=category_id)
-        
-        if language_id is not None:
-            courses = courses.filter(language_id=language_id)
-
-        if teacher_id is not None:
-            courses = courses.filter(teacher_id=teacher_id)
+        for key in ['category', 'language', 'teacher']:
+            param = request.query_params.get(key, None)
+            if param is not None:
+                courses = courses.filter(**{f"{key}_id": param})
 
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
 
-
+# ---------------------------------------------------
+# Standard Django views for course details, enrollment, and course management, using forms and models
+    
 @login_required
+# Display details for a single course, including enrollment and rating status
 def course_detail(request, id):
     course = get_object_or_404(Course, id=id)
     average_rating = course.average_rating()   
@@ -99,6 +96,7 @@ def course_detail(request, id):
     return render(request, 'courses/course_detail.html', context)
 
 @login_required
+# Handle enrollment to a course, including success and error messages
 def enroll_in_course(request, id):
     course = get_object_or_404(Course, id=id)
     student = request.user  
@@ -119,6 +117,7 @@ def enroll_in_course(request, id):
     return redirect('courses:course_detail', id=id)
 
 @login_required
+# View for adding a new course, handling POST for form submission and file uploads
 def add_course(request):
     if request.method == 'POST':
         course_form = CourseForm(request.POST, request.FILES)
@@ -148,9 +147,8 @@ def add_course(request):
         material_formset = MaterialFormSet()
     return render(request, 'courses/add_course.html', {'form': course_form, 'material_formset': material_formset})
 
-
-
 @login_required
+# View for editing an existing course, handling form and material formset
 def edit_course(request, id):
     course = get_object_or_404(Course, id=id)
     if request.method == 'POST':
@@ -165,12 +163,14 @@ def edit_course(request, id):
         material_formset = MaterialFormSet(instance=course)
     return render(request, 'courses/edit_course.html', {'form': form, 'material_formset': material_formset, 'course': course})
 
+# Display a list of featured courses, simple query with limit
 def featured_courses(request):
     featured_courses=[]
     featured_courses = Course.objects.all()[:5]   
     context = {'courses': featured_courses}
     return render(request, 'main/home.html', context)
 
+# Allow authenticated users to add comments to a course and notify the course teacher
 @login_required
 def add_comment_to_course(request, id):
     course = get_object_or_404(Course, id=id)
@@ -186,9 +186,9 @@ def add_comment_to_course(request, id):
         message=f"A new comment has been posted in your course '{course.title}'.",
         url=f"/{course.id}" + "/#comments", 
     )
-
     return redirect('courses:course_detail', id=id)
 
+# Display courses filtered by a specific category
 def courses_by_category(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     courses = Course.objects.filter(category=category)
@@ -198,7 +198,7 @@ def courses_by_category(request, category_id):
     }
     return render(request, 'courses/category_courses.html', context)
 
-
+# Handle file upload by teachers, responding with JSON for AJAX requests
 @login_required
 def upload_teacher_file(request):
     if request.method == 'POST':

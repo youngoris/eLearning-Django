@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
-
     'apps.accounts',
     'apps.students',
     'apps.teachers',
@@ -41,7 +40,7 @@ INSTALLED_APPS = [
     'apps.api',
     'apps.main',
 
-    'rest_framework',
+    'rest_framework', 
     'rest_framework.authtoken',
 
     'django_extensions',

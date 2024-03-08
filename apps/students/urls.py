@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+# URL patterns for the students app
 urlpatterns = [
     path('register/', views.register_student, name='register_student'),
     path('<int:id>/', views.student_detail, name='student_detail'),

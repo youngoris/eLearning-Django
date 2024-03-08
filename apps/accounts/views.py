@@ -19,8 +19,9 @@ from rest_framework.generics import CreateAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 
+# API views for user detail, registration, login, profile, password change, and notifications
 
-
+# Allows users to view and update their own profile
 class CustomUserDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -35,13 +36,13 @@ class CustomUserDetailView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+# Allows new users to register
 class UserRegisterAPIView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [AllowAny]  
 
-
+# Authenticates users and returns a token for session management
 class LoginAPIView(APIView):
     permission_classes = []  
 
@@ -53,7 +54,8 @@ class LoginAPIView(APIView):
             token, created = Token.objects.get_or_create(user=user)
             return Response({"token": token.key})
         return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
+    
+# Provides user profile details and allows for profile updates
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -67,7 +69,8 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+# Enables authenticated users to change their password
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -79,7 +82,7 @@ class ChangePasswordView(APIView):
             return Response({"message": "Password updated successfully"})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+# Marks a specific notification as read for the user
 class MarkNotificationAsReadAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -89,8 +92,7 @@ class MarkNotificationAsReadAPIView(APIView):
         notification.save()
         return Response({"message": "Notification marked as read."}, status=status.HTTP_200_OK)
 
-
-
+# Allows teachers to block students from their courses
 class BlockStudentAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -106,6 +108,7 @@ class BlockStudentAPIView(APIView):
 
         return Response({'message': f'{student.username} has been blocked and unenrolled from all your courses.'}, status=status.HTTP_200_OK)
     
+# Allows users to post status updates    
 class StatusUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -116,7 +119,8 @@ class StatusUpdateAPIView(APIView):
             status_update = serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+# Custom permission to restrict object deletion    
 class IsOwnerOrAdmin(BasePermission):
     """
     Custom permission to only allow owners of an object or admins to delete it.
@@ -127,7 +131,8 @@ class IsOwnerOrAdmin(BasePermission):
             return True
         # Only owners are allowed to delete their objects
         return obj.user == request.user
-
+    
+# Allows users to delete their own status updates or admins to delete any
 class StatusUpdateDeleteAPIView(DestroyAPIView):
     queryset = StatusUpdate.objects.all()
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
@@ -136,7 +141,7 @@ class StatusUpdateDeleteAPIView(DestroyAPIView):
     def perform_destroy(self, instance):
         instance.delete()
 
-
+# Lists courses a user is enrolled in
 class UserEnrolledCoursesAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -152,8 +157,10 @@ class UserEnrolledCoursesAPIView(APIView):
         serializer = CourseSerializer(courses, many=True)
         return Response(serializer.data)
     
-
-
+#-------------------------------------------------------------    
+# Traditional Django views for user and profile management
+    
+# Handles user registration using a custom form
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -164,10 +171,11 @@ def register(request):
         form = CustomUserCreationForm()
     return render(request, 'accounts/register.html', {'form': form})
 
-
+# Displays a welcome message post-registration
 def welcome(request):
      return render(request, 'accounts/welcome.html')
 
+# Handles the login process
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -190,6 +198,7 @@ def login_view(request):
 
     return render(request, 'login.html')
 
+# Allows users to view and edit their profile
 @login_required
 def profile(request):
     edit_mode = request.GET.get('edit', '0') == '1'
@@ -202,7 +211,7 @@ def profile(request):
         form = CustomUserEditForm(instance=request.user)
     return render(request, 'accounts/profile.html', {'form': form, 'edit_mode': edit_mode})
 
-
+# Enables users to change their password through a form
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -221,6 +230,7 @@ def change_password(request):
         'form': form
         })
 
+# Handles profile editing
 def edit_profile(request):
     if request.method == 'POST':
         form = CustomUserEditForm(request.POST, request.FILES, instance=request.user)
@@ -231,11 +241,13 @@ def edit_profile(request):
         form = CustomUserEditForm(instance=request.user)
     return render(request, 'accounts/edit_profile.html', {'form': form})
 
+# Logs out the user
 def logout_view(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")  # Optional: add a success message
     return redirect('home')  # Redirect to homepage or login page
 
+# Displays the user's homepage with relevant information
 @login_required
 def user_home(request, username):
     user = get_object_or_404(CustomUser, username=username)
@@ -273,6 +285,7 @@ def user_home(request, username):
 
     return render(request, 'accounts/user_home.html', context)
 
+# Allows users to create a new status update
 def status_update(request):
     if request.method == "POST":
  
@@ -284,6 +297,7 @@ def status_update(request):
             messages.error(request, "Status cannot be empty.")
     return redirect('/')
 
+# Marks a notification as read
 def mark_notification_as_read(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     notification.read = True
@@ -291,6 +305,7 @@ def mark_notification_as_read(request, notification_id):
  
     return redirect("/courses" + notification.url)
 
+# Blocks a student from the teacher's courses
 @login_required
 def block_student(request, student_id):
     student = get_object_or_404(CustomUser, id=student_id)
