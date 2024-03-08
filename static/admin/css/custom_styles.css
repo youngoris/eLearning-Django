@@ -310,9 +310,12 @@ footer {
     display: flex;
     flex-direction: column;
     height: 350px;  
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    border: 1px solid #d9d7d7;
+    border-radius: 8px;
+    padding: 10px;
     overflow: hidden;
+    background-color: #ffffff;
+
 }
 
 .course-card img {
@@ -322,16 +325,15 @@ footer {
 
 .course-card-body {
     flex: 1;
-    padding: 15px;
+    padding: 5px;
     display: flex;
     flex-direction: column;
+    
 }
+
 
 .course-title, .course-description {
     margin: 5px 0;  
-}
-
-.course-description {
     display: -webkit-box;
     -webkit-line-clamp: 2;  
     -webkit-box-orient: vertical;
