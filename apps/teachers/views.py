@@ -23,5 +23,5 @@ def add_course(request):
 
 
 def teacher_detail(request, id):
-    # 此处添加处理逻辑
+
     return render(request, 'teachers/teacher_detail.html', {})

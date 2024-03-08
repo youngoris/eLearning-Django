@@ -12,16 +12,16 @@
                 <div class="row">
                     {% for course in course_results %}
                     <div class="col-md-6 mb-4">
-                        <div class="card h-100 d-flex flex-column"> <!-- 使用Flex布局和垂直方向 -->
+                        <div class="card h-100 d-flex flex-column">  
                             {% if course.cover %}
                             <img src="{{ course.cover.url }}" class="card-img-top" alt="Course Cover" style="height: 180px; object-fit: cover;">
                             {% endif %}
-                            <div class="card-body flex-grow-1"> <!-- 允许内容区域扩展 -->
+                            <div class="card-body flex-grow-1">  
                                 <h5 class="card-title">{{ course.title }}</h5>
                                 <p class="card-text">{{ course.description|truncatewords:20 }}</p>
                             </div>
-                            <div class="card-footer bg-transparent border-top-0"> <!-- 按钮置底，无边框背景透明 -->
-                                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100">View Course</a> <!-- 宽度100% -->
+                            <div class="card-footer bg-transparent border-top-0">  
+                                <a href="{% url 'courses:course_detail' course.id %}" class="btn btn-primary w-100">View Course</a> 
                             </div>
                         </div>
                     </div>
@@ -33,12 +33,11 @@
                 {% endif %}
             </div>
             
-            <!-- Users Result Module -->
-            <div class="col-lg-4">
+             <div class="col-lg-4">
                 <h3>Users</h3>
                 <div class="row">
                     {% for user in user_results %}
-                    <div class="col-md-6 mb-4"> <!-- 每行显示3个用户，根据实际布局调整数量 -->
+                    <div class="col-md-6 mb-4"> 
                         <div class="card">
                             <div class="card-body text-center">
                                 <img src="{{ user.get_avatar_url }}" class="rounded-circle mb-3" alt="User Avatar" style="width: 100px; height: 100px;">

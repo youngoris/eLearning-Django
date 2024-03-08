@@ -29,7 +29,7 @@ class CustomUser(AbstractUser):
 
 class StatusUpdate(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    text = models.TextField()  # 确保有这个字段
+    text = models.TextField()  
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

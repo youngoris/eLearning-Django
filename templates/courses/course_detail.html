@@ -136,18 +136,16 @@
         var materialSelect = document.getElementById('materialSelect');
         var downloadBtn = document.getElementById('downloadBtn');
     
-        var selectedMaterialUrl = ''; // 用于存储选中的材料URL
+        var selectedMaterialUrl = '';  
     
-        // 监听选择框的变化
         materialSelect.addEventListener('change', function() {
-            selectedMaterialUrl = this.value; // 更新选中的材料URL
+            selectedMaterialUrl = this.value;  
         });
     
-        // 监听下载按钮的点击事件
         downloadBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // 阻止按钮的默认行为
+            e.preventDefault();  
             if (selectedMaterialUrl) {
-                window.location.href = selectedMaterialUrl; // 触发下载
+                window.location.href = selectedMaterialUrl;  
             } else {
                 alert('Please select a material to download.');
             }

@@ -29,7 +29,7 @@ class CustomUserDetailView(APIView):
         return Response(serializer.data)
 
     def put(self, request, format=None):
-        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)  # partial=True 允许部分更新
+        serializer = CustomUserSerializer(request.user, data=request.data, partial=True)   
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -39,11 +39,11 @@ class CustomUserDetailView(APIView):
 class UserRegisterAPIView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegistrationSerializer
-    permission_classes = [AllowAny]  # 允许任何用户注册
+    permission_classes = [AllowAny]  
 
 
 class LoginAPIView(APIView):
-    permission_classes = []  # 允许任何人访问，即使是未认证的用户
+    permission_classes = []  
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
@@ -166,30 +166,28 @@ def register(request):
 
 
 def welcome(request):
-    # 处理视图逻辑
-    return render(request, 'accounts/welcome.html')
+     return render(request, 'accounts/welcome.html')
 
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        remember_me = request.POST.get('remember_me')  # 从表单获取记住我复选框的值
+        remember_me = request.POST.get('remember_me')  
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
 
             if remember_me:
-                request.session.set_expiry(2592000)  # 设置会话过期时间为30天
+                request.session.set_expiry(2592000)  
             else:
-                request.session.set_expiry(0)  # 会话在浏览器关闭时过期
+                request.session.set_expiry(0)  
 
             return redirect('home')
         else:
-            # 处理登录失败的情况
+            
             pass
 
-    # 如果是GET请求或者登录失败，渲染登录表单
     return render(request, 'login.html')
 
 @login_required
@@ -199,7 +197,6 @@ def profile(request):
         form = CustomUserEditForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            # 重定向到不含查询参数的profile页面，以退出编辑模式
             return redirect('profile')
     else:
         form = CustomUserEditForm(instance=request.user)
@@ -211,11 +208,11 @@ def change_password(request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            # 更新session以防用户被登出，但是我们接下来会立即登出用户
+            
             update_session_auth_hash(request, user)
-            logout(request)  # 登出用户
+            logout(request)   
             messages.success(request, 'Your password was successfully updated! Please log in again.')
-            return redirect('login')  # 重定向到登录页面
+            return redirect('login')   
         else:
             messages.error(request, 'Please correct the error below.')
     else:
@@ -244,7 +241,7 @@ def user_home(request, username):
     user = get_object_or_404(CustomUser, username=username)
     status_updates = StatusUpdate.objects.filter(user=user).order_by('-created_at')
 
-    # 初始化变量，以避免UnboundLocalError
+ 
     my_courses = []
     available_courses = []
     my_students = []
@@ -278,7 +275,7 @@ def user_home(request, username):
 
 def status_update(request):
     if request.method == "POST":
-        # 处理状态更新逻辑
+ 
         text = request.POST.get('status', '')
         if text:
             StatusUpdate.objects.create(user=request.user, text=text)
@@ -291,17 +288,17 @@ def mark_notification_as_read(request, notification_id):
     notification = get_object_or_404(Notification, id=notification_id)
     notification.read = True
     notification.save()
-    # 重定向到通知关联的URL或某个默认页面
+ 
     return redirect("/courses" + notification.url)
 
 @login_required
 def block_student(request, student_id):
     student = get_object_or_404(CustomUser, id=student_id)
-    # 确保当前登录的用户是教师
+ 
     if request.user.user_type == 'teacher':
-        # 获取当前教师的所有课程
+ 
         courses = Course.objects.filter(teacher=request.user)
-        # 对于每个课程，取消学生的注册
+ 
         for course in courses:
             Enrollment.objects.filter(student=student, course=course).delete()
         messages.success(request, f'{student.username} has been blocked and unenrolled from all your courses.')

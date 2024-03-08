@@ -30,7 +30,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'user_type', 'email',  'avatar', 'real_name',  'birth_date' ,'country')
-        read_only_fields = ('username',)  # Assuming you don't want to allow username changes
+        read_only_fields = ('username',) 
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
