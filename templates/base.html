@@ -103,28 +103,38 @@
         </main>
     </div>
 
-    <!-- 聊天图标 -->
-    {% if user.is_authenticated %}
-    <div id="chat-icon" >
-        <img src="{% static 'admin/img/chat-icon.svg' %}" alt="Chat Icon">
+    <!-- chat icon  -->
+    <!-- {% if user.is_authenticated %} -->
+
+    <div id="chat-container">
+        <!-- Adjusting the chat icon to include user info as data- attributes -->
+        <div id="chat-icon" data-username="{{ user.real_name }}" data-avatar="{{ user.get_avatar_url }}">
+            <img src="{% static 'admin/img/chat-icon.png' %}" alt="Chat Icon">
+        </div>
+
+     
+        <div id="chat-plugin">
+                            <!-- chat head -->
+            <div id="chat-header">
+                <h3>Global Chat</h3>
+            </div>
+        
+            <!-- chat message -->
+            <div id="chat-messages" class="chat-messages">
+                <!-- .... -->
+            </div>
+        
+            <!-- chat input -->
+            <div class="chat-input">
+                <input type="text" id="chat-message-input" placeholder="Type a message...">
+                <button id="chat-message-send">Send</button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- 聊天插件的容器，默认是隐藏的 -->
-    <div id="chat-plugin" >
-        <div id="chat-header">
-            <h4>Chat in {{ room_name|default:"Public Room" }}</h4>
-        </div>
-
-        <div id="chat-messages">
-            <!-- 聊天消息将动态添加到这里 -->
-        </div>
-        <div class="chat-input">
-            <input type="text" id="chat-message-input" placeholder="Type a message...">
-            <button id="chat-message-send">Send</button>
-        </div>
-    </div>
-    {% endif %}
-
+    <!-- {% endif %} -->
+    
     
 
     
@@ -174,51 +184,11 @@
     </footer>
         
         
-
     <script>
-        // 初始化变量
-        let currentRoomName = "Public Room"; // 默认聊天室
-    
-        // WebSocket连接函数
-        function connectWebSocket(roomName) {
-            const chatSocket = new WebSocket(
-                `ws://${window.location.host}/ws/chat/${roomName}/`
-            );
-    
-            chatSocket.onmessage = function(e) {
-                const data = JSON.parse(e.data);
-                document.querySelector('#chat-messages').innerHTML += `<p><strong>${data.username || "匿名用户"}:</strong> ${data.message}</p>`;
-            };
-    
-            chatSocket.onclose = function(e) {
-                console.error('Chat socket closed unexpectedly');
-            };
-    
-            document.querySelector('#chat-message-send').onclick = function(e) {
-                const messageInputDom = document.querySelector('#chat-message-input');
-                const message = messageInputDom.value;
-                chatSocket.send(JSON.stringify({
-                    'message': message,
-                    'username': "{{ request.user.username }}", // 发送用户名
-                }));
-                messageInputDom.value = '';
-            };
-    
-            document.querySelector('#chat-message-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    document.querySelector('#chat-message-send').click();
-                    e.preventDefault();
-                }
-            });
-        }
-    
-        // 初始连接WebSocket
-        connectWebSocket(currentRoomName);
-    
         document.addEventListener('DOMContentLoaded', function() {
             var chatIcon = document.getElementById('chat-icon');
             var chatPlugin = document.getElementById('chat-plugin');
-        
+            
             chatIcon.addEventListener('click', function() {
                 // 切换聊天窗口的显示和隐藏
                 if (chatPlugin.style.display === 'block') {
@@ -228,10 +198,47 @@
                 }
             });
         });
-        
-        
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/`);
+            
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                document.querySelector('#chat-messages').innerHTML += `
+                    <div class="chat-message">
+                        <img src="${data.avatar}" alt="Avatar" class="chat-avatar">
+                        <div>
+                        <strong>${data.username}:</strong> ${data.message}
+                        
+                        <span class="chat-timestamp">${data.timestamp}</span>
+                        </div>
+                    </div>
+                `;
+            };
     
+            chatSocket.onclose = function(e) {
+                console.error('Chat socket closed unexpectedly');
+            };
+    
+            document.querySelector('#chat-message-send').onclick = function(e) {
+                const messageInputDom = document.querySelector('#chat-message-input');
+                const message = messageInputDom.value;
+                chatSocket.send(JSON.stringify({'message': message}));
+                messageInputDom.value = '';
+            };
+    
+            document.querySelector('#chat-message-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    document.querySelector('#chat-message-send').click();
+                    e.preventDefault();
+                }
+            });
+        });
+
+        
     </script>
+    
     
     
     <!-- Bootstrap Bundle with Popper -->

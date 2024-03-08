@@ -199,73 +199,109 @@ footer {
 
 
 
-
-/* 调整聊天图标的样式，确保它显示 */
-#chat-icon {
+#chat-container {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 0;
+    right: 0;
+    z-index: 1000; /* 保证容器位于其他元素之上 */
+}
+
+#chat-icon {
+    display: block; /* 显示聊天图标 */
     cursor: pointer;
-    z-index: 1500;
-    display: block; /* 新增 */
-  }
+    position: fixed;
+    
+    bottom: 20px; /* 根据您的需求调整 */
+    right: 20px;
+    z-index: 1001; /* 确保图标位于聊天窗口之上 */
+}
+
+#chat-icon img {
+    width: 50px; 
+    height: 50px;
+}
 
 #chat-plugin {
+    display: none; /* 默认不显示 */
     position: fixed;
-    bottom: 20px; /* 距离底部距离 */
-    right: 20px; /* 距离右侧距离 */
-    width: 300px;
-    max-height: 400px; /* 限高 */
-    z-index: 1000;
-    background-color: rgb(240, 239, 239);
-    border: 1px solid #ddd;
-    border-radius: 8px; /* 圆角 */
-    box-shadow: 0 0 9px rgba(0, 0, 0, 0.1); /* 阴影 */
+    bottom: 70px;
+    right: 20px;
+    width: 300px; /* 根据需要调整宽度 */
+    max-height: 400px; /* 可以根据需要调整高度 */
+    z-index: 1000; /* 与容器相同确保在其上 */
+    overflow: auto; /* 允许滚动 */
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* 添加阴影效果 */
 }
-  
-/* 限制聊天消息区域的高度，并允许滚动 */
-#chat-messages {
-    flex-grow: 1;
-    padding: 3px;
-    overflow-y: auto;
-    min-height: 100px; 
-    max-height: 300px; /* 限制最大高度，并允许滚动 */
-    border-bottom: 1px solid #e0e1e1; /* 添加横线 */
+/* 聊天头部样式 */
+#chat-header {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
 }
 
-#chat-message:not(:last-child) {
-    border-bottom: 1px solid #ddd; /* 为最后一条消息之外的每条消息添加横线 */
+/* 聊天消息区域的样式 */
+.chat-messages {
+    max-height: 300px; /* 限制高度并允许滚动 */
+    overflow-y: auto; /* 添加滚动条 */
+    padding: 10px;
+    background-color: #fafafa; /* 轻微的背景色 */
 }
 
-.chat-input{
+/* 消息的样式 */
+.chat-message {
+    display: flex;
+    background-color: #fff; /* 白色背景 */
+    padding: 5px 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    box-shadow: 0 2px 2px rgba(0,0,0,.1); /* 轻微的阴影效果 */
+}
+
+
+.chat-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* 聊天输入区域的样式 */
+.chat-input {
+    display: flex;
     padding: 10px;
     border-top: 1px solid #ddd;
-    margin-bottom: 5px;
-
 }
 
-#chat-header {
-    padding: 3px;
-    border-bottom: 1px solid #ddd;
-    background-color: #e7e7e7;
-    font-weight: bold;
-    text-align: center;
-    color: #4f4f50;
+/* 输入框的样式 */
+#chat-message-input {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 5px;
 }
 
-
-
-/* 
-.course-card {
-    text-align: center;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+/* 发送按钮的样式 */
+#chat-message-send {
+    background-color: #0056b3; /* 使用更深的蓝色，为按钮添加颜色 */
+    color: #fff; /* 按钮文字颜色为白色 */
+    border: none;
+    padding: 6px 12px;
+    margin-left: 10px; /* 输入框与按钮之间的间隔 */
+    cursor: pointer;
+    border-radius: 3px;
 }
-.course-card img {
-    max-width: 100%;
-    height: auto;
-} */
+
+/* 聊天时间戳的样式 */
+.chat-timestamp {
+    display: block; /* 显示为块级元素，使时间戳在用户名下方 */
+    font-size: 0.75rem; /* 调整字体大小 */
+    color: #999; /* 字体颜色为淡灰色 */
+    margin-top: 5px; /* 在用户名和时间戳之间添加间隔 */
+}
+
 
 
 .course-card {
@@ -305,3 +341,4 @@ footer {
 .btn-primary {
     margin-top: auto;  
 }
+

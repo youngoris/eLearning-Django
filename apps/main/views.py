@@ -4,7 +4,9 @@ from apps.accounts.models import CustomUser
 from .models import ChatRoom
 from django.http import JsonResponse
 
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from datetime import datetime
 
 def search_results(request):
     query = request.GET.get('query', '')
@@ -55,3 +57,18 @@ def create_chat_room(request):
 def chat_view(request, room_name=None):
     if not room_name:
         return redirect('chat_view', room_name='Public Room')
+    
+
+# def send_chat_message(room_name, message, user):
+#     channel_layer = get_channel_layer()
+#     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间戳
+#     async_to_sync(channel_layer.group_send)(
+#         room_name,
+#         {
+#             "type": "chat_message",
+#             "message": message,
+#             "username": user.username,
+#             "avatar_url": user.get_avatar_url(),  # 使用用户的get_avatar_url方法获取头像URL
+#             "timestamp": now,  # 发送当前时间戳
+#         },
+#     )
